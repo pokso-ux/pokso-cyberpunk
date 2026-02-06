@@ -1,0 +1,10 @@
+{
+  "network": "lukso-mainnet",
+  "contractAddress": "0x137dDfe54C4494460889Ec29a48234d9c41Eef4a",
+  "deployer": "0xb3583A1c41ba77BD5960256aa36fc7DB5669312A",
+  "transactionHash": "0xc1667fe52cc3676c7604f3e6ef4d16d46fa33b9f11cd674f67d38c32cd609271",
+  "timestamp": "2026-02-06T14:34:40.253Z",
+  "mintPrice": "5 LYX",
+  "totalSupply": 500,
+  "maxPerWallet": 10
+}
