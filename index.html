@@ -169,12 +169,12 @@
   </div>
 
   <script>
-    // Load NFTs
+    // Load all 200 NFTs
     const grid = document.getElementById('grid');
-    for(let i = 0; i < 20; i++) {
+    for(let i = 0; i < 200; i++) {
       const div = document.createElement('div');
       div.className = 'nft-item';
-      div.innerHTML = `<img src="nfts/${i}.png" alt="POKSO #${i}"><div class="nft-id">#${i}</div>`;
+      div.innerHTML = `<img src="nfts/${i}.png" alt="POKSO #${i}" loading="lazy"><div class="nft-id">#${String(i).padStart(3, '0')}</div>`;
       grid.appendChild(div);
     }
 
