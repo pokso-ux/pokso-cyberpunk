@@ -133,6 +133,11 @@
   </style>
 </head>
 <body>
+  <nav style="background: #0d0221; padding: 15px; border-bottom: 2px solid #00ff41; text-align: center;">
+    <a href="index.html" style="color: #00ff41; text-decoration: none; margin: 0 20px; font-size: 1.1rem;">🏠 Accueil</a>
+    <a href="story.html" style="color: #00ff41; text-decoration: none; margin: 0 20px; font-size: 1.1rem;">📖 L'Histoire</a>
+    <a href="#mint" style="color: #00ff41; text-decoration: none; margin: 0 20px; font-size: 1.1rem;">💎 Mint</a>
+  </nav>
   <div class="hero">
     <h1>POKSO</h1>
     <p class="subtitle">Cyberpunk NFT Collection on LUKSO</p>
@@ -168,6 +173,8 @@
     <p>Created by Openurmind 🆙 🐳 | POKSO Collection 2026</p>
   </div>
 
+  <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
+  <script src="app.js"></script>
   <script>
     // Load all 200 NFTs
     const grid = document.getElementById('grid');
@@ -176,14 +183,6 @@
       div.className = 'nft-item';
       div.innerHTML = `<img src="nfts/${i}.png" alt="POKSO #${i}" loading="lazy"><div class="nft-id">#${String(i).padStart(3, '0')}</div>`;
       grid.appendChild(div);
-    }
-
-    function connectUP() {
-      alert('Connect Universal Profile - Coming soon!');
-    }
-
-    function mintNFT() {
-      alert('Mint function - Coming soon!');
     }
   </script>
 </body>

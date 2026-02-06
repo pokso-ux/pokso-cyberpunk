@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POKSO - L'Histoire</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0f;
+      color: #00ff41;
+      font-family: 'Courier New', monospace;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    .nav {
+      background: #0d0221;
+      padding: 20px;
+      border-bottom: 2px solid #00ffff;
+      text-align: center;
+    }
+    .nav a {
+      color: #00ff41;
+      text-decoration: none;
+      margin: 0 20px;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+    }
+    .nav a:hover {
+      color: #ff00ff;
+      text-shadow: 0 0 10px #ff00ff;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+    h1 {
+      font-size: 3rem;
+      text-align: center;
+      text-shadow: 0 0 20px #00ff41;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #ff00ff;
+      font-size: 1.2rem;
+      margin-bottom: 50px;
+    }
+    .chapter {
+      margin-bottom: 50px;
+      padding: 30px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #0d0221 100%);
+      border: 1px solid #00ffff;
+      border-radius: 8px;
+    }
+    .chapter h2 {
+      color: #00ffff;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #00ffff;
+    }
+    .chapter p {
+      margin-bottom: 15px;
+      color: #b8b8b8;
+    }
+    .highlight {
+      color: #ff00ff;
+      font-weight: bold;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin: 40px 0;
+      text-align: center;
+    }
+    .stat-box {
+      background: #0d0221;
+      padding: 20px;
+      border: 1px solid #ff00ff;
+      border-radius: 8px;
+    }
+    .stat-number {
+      font-size: 2.5rem;
+      color: #00ffff;
+      text-shadow: 0 0 15px #00ffff;
+    }
+    .stat-label {
+      color: #888;
+      font-size: 0.9rem;
+    }
+    .timeline {
+      position: relative;
+      padding-left: 30px;
+      border-left: 2px solid #00ff41;
+      margin: 30px 0;
+    }
+    .timeline-item {
+      margin-bottom: 30px;
+      position: relative;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -36px;
+      top: 5px;
+      width: 10px;
+      height: 10px;
+      background: #ff00ff;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ff00ff;
+    }
+    .timeline-date {
+      color: #ff00ff;
+      font-weight: bold;
+    }
+    .footer {
+      text-align: center;
+      padding: 40px;
+      border-top: 2px solid #00ff41;
+      color: #636e72;
+      margin-top: 60px;
+    }
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html">🏠 Accueil</a>
+    <a href="story.html">📖 L'Histoire</a>
+    <a href="index.html#mint">💎 Mint</a>
+  </nav>
+
+  <div class="container">
+    <h1>POKSO CYBERPUNK</h1>
+    <p class="subtitle">/// L'HISTOIRE DE LA COLLECTION ///</p>
+
+    <div class="chapter">
+      <h2>🌆 Genesis</h2>
+      <p>Dans les rues néon-de Londres de 2087, où la pluie acide s'écoule sur des buildings holographiques, naquit <span class="highlight">POKSO</span>.</p>
+      <p>Ce n'était pas qu'une collection de NFTs. C'était un <span class="highlight">manifeste</span>. Une rébellion contre les corporations qui avaient assimilé l'art numérique, le transformant en marchandise sans âme.</p>
+      <p>200 rebels. 200 visages uniques. Chacun portant les cicatrices d'un monde cyberpunk où la technologie et l'humanité dansent une danse dangereuse.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-number">200</div>
+        <div class="stat-label">REBELS UNIQUES</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">5</div>
+        <div class="stat-label">LYX PAR NFT</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">POSSIBILITÉS</div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <h2>🎨 L'Art du Pixel</h2>
+      <p>Chaque POKSO est généré algorithmiquement, mais avec une intention humaine irréductible. Les traits ne sont pas le fruit du hasard — ils sont <span class="highlight">sélectionnés</span>.</p>
+      <p>Les implants cybernétiques brillants. Les cigarettes fumantes. Les bandanas tachés de la poussière des rues. Les chaînes en or qui contrastent avec la décrépitude ambiante.</p>
+      <p>Tout est symbolique. Tout est <span class="highlight">résistance</span>.</p>
+    </div>
+
+    <div class="chapter">
+      <h2>⛓️ La Roadmap</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-date">Phase 1 — Genesis</div>
+          <p>Création des 200 NFTs uniques. Déploiement sur LUKSO. Mint public à 5 LYX.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Phase 2 — Expansion</div>
+          <p>Intégration avec Universal Profile. Airdrops exclusifs pour les holders. Merchandising physique.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Phase 3 — Révolution</div>
+          <p>Gouvernance DAO. Les holders décident de l'avenir. Nouvelles collections. Partenariats IRL.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Phase 4 — Immortalité</div>
+          <p>POKSO devient un univers. Jeux vidéo. Comics. Animations. La rébellion ne meurt jamais.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <h2>🔮 Le Futur est Écrit</h2>
+      <p>POKSO n'est pas une destination. C'est un <span class="highlight">point de départ</span>.</p>
+      <p>Tu tiens entre tes mains (ou plutôt dans ton wallet) un fragment d'histoire. Un morceau d'un monde qui n'existe pas encore, mais qui pourrait devenir réel si suffisamment de croyants le veulent.</p>
+      <p><span class="highlight">Welcome to the resistance.</span></p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>POKSO CYBERPUNK COLLECTION © 2026</p>
+    <p>Built on LUKSO | Powered by OpenClaw</p>
+  </div>
+</body>
+</html>
