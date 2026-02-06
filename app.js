@@ -29,14 +29,101 @@ let userAddress = null;
 let upAddress = null;
 let nftContract = null;
 
+// Check if mobile device
+function isMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 // Check if UP browser extension is installed
 function isUPExtensionInstalled() {
   return window.lukso || window.ethereum;
 }
 
+// Show mobile connection modal
+function showMobileModal() {
+  const modal = document.createElement('div');
+  modal.id = 'mobile-modal';
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10,10,15,0.98);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100000;
+    padding: 20px;
+  `;
+  
+  modal.innerHTML = `
+    <div style="text-align: center; max-width: 400px;">
+      <h2 style="color: #00ff41; margin-bottom: 20px; font-size: 1.8rem;">📱 Mobile Detected</h2>
+      <p style="color: #fff; margin-bottom: 30px; line-height: 1.6;">
+        Pour te connecter sur mobile, tu dois ouvrir ce site dans une app wallet :
+      </p>
+      
+      <div style="margin-bottom: 20px;">
+        <a href="https://metamask.app.link/dapp/pokso-ux.github.io/pokso-cyberpunk/" style="
+          display: block;
+          background: #ff00ff;
+          color: white;
+          padding: 15px 30px;
+          text-decoration: none;
+          border-radius: 8px;
+          margin-bottom: 15px;
+          font-weight: bold;
+        ">🦊 Ouvrir dans MetaMask</a>
+        
+        <a href="https://r.jina.ai/http://pokso-ux.github.io/pokso-cyberpunk/" style="
+          display: block;
+          background: #1a1a2e;
+          color: #00ff41;
+          padding: 15px 30px;
+          text-decoration: none;
+          border-radius: 8px;
+          border: 2px solid #00ff41;
+          margin-bottom: 15px;
+          font-weight: bold;
+        ">🆙 Guide LUKSO Mobile</a>
+      </div>
+      
+      <div style="background: #1a1a2e; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: left;">
+        <h3 style="color: #ff00ff; margin-bottom: 10px;">📋 Instructions :</h3>
+        <ol style="color: #00ff41; line-height: 1.8; padding-left: 20px;">
+          <li>Installe <strong>MetaMask</strong> ou <strong>Universal Profile</strong> app</li>
+          <li>Crée/importe ton wallet</li>
+          <li>Ouvre le <strong>navigateur intégré</strong> dans l'app</li>
+          <li>Va sur <code style="background:#333;padding:2px 5px;">pokso-ux.github.io/pokso-cyberpunk</code></li>
+          <li>Connecte-toi et mint !</li>
+        </ol>
+      </div>
+      
+      <button onclick="document.getElementById('mobile-modal').remove()" style="
+        background: transparent;
+        border: 1px solid #666;
+        color: #666;
+        padding: 10px 30px;
+        cursor: pointer;
+        font-family: 'Courier New', monospace;
+      ">Fermer</button>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+}
+
 // Connect Universal Profile
 async function connectUP() {
   try {
+    // Check if mobile
+    if (isMobile() && !isUPExtensionInstalled()) {
+      showMobileModal();
+      return;
+    }
+    
     // Try Universal Profile extension first
     if (window.lukso) {
       provider = new ethers.providers.Web3Provider(window.lukso, 'any');
@@ -79,9 +166,13 @@ async function connectUP() {
       return;
     }
     
-    // No wallet found
-    showMessage('Please install Universal Profile browser extension', 'error');
-    window.open('https://my.universalprofile.cloud/', '_blank');
+    // No wallet found - show install message
+    if (isMobile()) {
+      showMobileModal();
+    } else {
+      showMessage('Please install Universal Profile browser extension', 'error');
+      window.open('https://my.universalprofile.cloud/', '_blank');
+    }
     
   } catch (error) {
     console.error('Connection error:', error);
@@ -166,7 +257,7 @@ async function getRandomTokenId() {
 // Mint NFT function
 async function mintNFT() {
   if (!signer || !nftContract) {
-    showMessage('Please connect your Universal Profile first!', 'error');
+    showMessage('Please connect your wallet first!', 'error');
     return;
   }
   
