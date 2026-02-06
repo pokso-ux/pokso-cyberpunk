@@ -1,248 +1,116 @@
-// POKSO Cyberpunk - Mint Integration
-// Universal Profile connection and minting functionality
+// POKSO Mint App - LUKSO Integration
+const UP_BROWSER_EXTENSION = 'https://my.universalprofile.cloud';
 
-const LUKSO_MAINNET = 'https://42.rpc.thirdweb.com';
-const MINT_PRICE = '5'; // LYX
-const MAX_PER_WALLET = 10;
-const COLLECTION_SIZE = 500;
+// NEW REAL CONTRACT ADDRESS
+const POKSO_CONTRACT = '0x77c33Cb3283Af1e3241b333AFd00A341Fa464795';
 
-// Contract address for the NFT collection (DEPLOYED!)
-const NFT_CONTRACT_ADDRESS = '0x137dDfe54C4494460889Ec29a48234d9c41Eef4a';
+// POKSOMinter ABI
+const POKSO_ABI = [
+  "constructor()",
+  "function mint(uint256 tokenId) external payable",
+  "function mintedCount() view returns (uint256)",
+  "function mintedByWallet(address) view returns (uint256)",
+  "function mintPrice() view returns (uint256)",
+  "function maxPerWallet() view returns (uint256)",
+  "function totalSupply() view returns (uint256)",
+  "function owner() view returns (address)",
+  "function withdraw() external",
+  "event Mint(address indexed minter, uint256 indexed tokenId, uint256 price)"
+];
 
-let provider = null;
-let signer = null;
-let userAddress = null;
-let upAddress = null;
+let provider, signer, upAddress, contract;
 
-// Check if UP browser extension is installed
-function isUPExtensionInstalled() {
-  return window.lukso || window.ethereum;
-}
-
-// Connect Universal Profile
 async function connectUP() {
-  try {
-    // Try Universal Profile extension first
-    if (window.lukso) {
-      provider = new ethers.providers.Web3Provider(window.lukso, 'any');
-      await provider.send('eth_requestAccounts', []);
-      signer = provider.getSigner();
-      
-      // Get the Universal Profile address
-      const accounts = await provider.listAccounts();
+  if(window.ethereum) {
+    try {
+      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
       upAddress = accounts[0];
-      
-      // Display connected
-      updateUIConnected(upAddress);
-      showMessage('Universal Profile connected!', 'success');
-      return;
-    }
-    
-    // Fallback to regular MetaMask or other wallets
-    if (window.ethereum) {
-      provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
-      await provider.send('eth_requestAccounts', []);
+      document.querySelector('.connect-btn').textContent = 'Connected: ' + upAddress.slice(0,6) + '...' + upAddress.slice(-4);
+      provider = new ethers.providers.Web3Provider(window.ethereum);
       signer = provider.getSigner();
       
-      const accounts = await provider.listAccounts();
-      userAddress = accounts[0];
+      // Initialize contract
+      contract = new ethers.Contract(POKSO_CONTRACT, POKSO_ABI, signer);
       
-      updateUIConnected(userAddress);
-      showMessage('Wallet connected!', 'success');
-      return;
+      // Update UI with contract info
+      await updateContractInfo();
+      
+    } catch(e) {
+      alert('Connect your Universal Profile first!');
+      window.open(UP_BROWSER_EXTENSION, '_blank');
     }
-    
-    // No wallet found
-    showMessage('Please install Universal Profile browser extension', 'error');
-    window.open('https://my.universalprofile.cloud/', '_blank');
-    
-  } catch (error) {
-    console.error('Connection error:', error);
-    showMessage('Failed to connect: ' + error.message, 'error');
+  } else {
+    alert('Install LUKSO Universal Profile Extension');
+    window.open(UP_BROWSER_EXTENSION, '_blank');
   }
 }
 
-// Update UI when connected
-function updateUIConnected(address) {
-  const btn = document.querySelector('.connect-btn');
-  if (btn) {
-    btn.textContent = address.slice(0, 6) + '...' + address.slice(-4);
-    btn.style.background = '#00ff41';
-    btn.style.color = '#0a0a0f';
+async function updateContractInfo() {
+  if (!contract) return;
+  
+  try {
+    const mintPrice = await contract.mintPrice();
+    const totalSupply = await contract.totalSupply();
+    const mintedCount = await contract.mintedCount();
+    const maxPerWallet = await contract.maxPerWallet();
+    
+    // Update UI elements if they exist
+    const infoEl = document.getElementById('contract-info');
+    if (infoEl) {
+      infoEl.innerHTML = `
+        <p>💰 Price: ${ethers.utils.formatEther(mintPrice)} LYX</p>
+        <p>📦 Minted: ${mintedCount}/${totalSupply}</p>
+        <p>👛 Max per wallet: ${maxPerWallet}</p>
+      `;
+    }
+  } catch (e) {
+    console.error('Error fetching contract info:', e);
   }
 }
 
-// Contract status - READY!
-const CONTRACT_READY = true;
-
-// Show message to user
-function showMessage(text, type = 'info') {
-  // Remove existing messages
-  const existing = document.querySelector('.message-toast');
-  if (existing) existing.remove();
-  
-  const msg = document.createElement('div');
-  msg.className = 'message-toast';
-  msg.textContent = text;
-  msg.style.cssText = `
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 15px 30px;
-    border-radius: 8px;
-    font-family: 'Courier New', monospace;
-    font-weight: bold;
-    z-index: 10000;
-    animation: slideDown 0.3s ease;
-    ${type === 'success' ? 'background: #00ff41; color: #0a0a0f; border: 2px solid #00ff41;' : ''}
-    ${type === 'error' ? 'background: #ff0040; color: white; border: 2px solid #ff0040;' : ''}
-    ${type === 'info' ? 'background: #00f5ff; color: #0a0a0f; border: 2px solid #00f5ff;' : ''}
-  `;
-  
-  document.body.appendChild(msg);
-  
-  setTimeout(() => {
-    msg.remove();
-  }, 5000);
-}
-
-// Get random unminted token ID (simplified)
-async function getRandomTokenId() {
-  // In production, this would query the contract for available tokens
-  return Math.floor(Math.random() * COLLECTION_SIZE);
-}
-
-// Mint NFT function
 async function mintNFT() {
-  if (!signer) {
-    showMessage('Please connect your Universal Profile first!', 'error');
-    return;
-  }
-  
-  // Check if contract is ready
-  if (!CONTRACT_READY) {
-    showMessage('⚠️ Smart contract deployment in progress! Coming soon...', 'error');
-    console.log('Contract address:', NFT_CONTRACT_ADDRESS);
-    console.log('Status: Needs proper Hardhat compilation and redeployment');
+  if(!signer || !contract) {
+    alert('Connect your UP first!');
     return;
   }
   
   try {
-    showMessage('Preparing mint...', 'info');
+    // Get mint price
+    const mintPrice = await contract.mintPrice();
+    const totalSupply = await contract.totalSupply();
     
-    // Get random token ID
-    const tokenId = await getRandomTokenId();
+    // Generate random tokenId (0 to totalSupply-1)
+    const tokenId = Math.floor(Math.random() * totalSupply);
     
-    // Create transaction
-    const priceWei = ethers.utils.parseEther(MINT_PRICE);
+    console.log(`Minting token #${tokenId}...`);
     
-    // Simple transfer to collection address (placeholder)
-    // In production, this would call the mint function on the NFT contract
-    const tx = {
-      to: upAddress || userAddress, // Self-transfer as placeholder
-      value: priceWei,
-      data: '0x' // Would be contract call data
-    };
+    // Call mint function with payment
+    const tx = await contract.mint(tokenId, {
+      value: mintPrice,
+      gasLimit: 300000
+    });
     
-    showMessage('Please confirm the transaction...', 'info');
-    
-    // Send transaction
-    const transaction = await signer.sendTransaction(tx);
-    
-    showMessage('Transaction sent! Waiting for confirmation...', 'info');
+    console.log('Transaction sent:', tx.hash);
+    alert(`Minting in progress! TX: ${tx.hash.slice(0, 20)}...`);
     
     // Wait for confirmation
-    const receipt = await transaction.wait();
+    const receipt = await tx.wait();
+    console.log('Transaction confirmed:', receipt);
     
-    if (receipt.status === 1) {
-      showMessage(`🎉 Successfully minted POKSO #${tokenId}!`, 'success');
-      // Show the minted NFT
-      showMintedNFT(tokenId);
-    } else {
-      showMessage('Transaction failed. Please try again.', 'error');
-    }
+    alert('✅ NFT Minted successfully!');
     
-  } catch (error) {
-    console.error('Mint error:', error);
-    if (error.code === 4001) {
-      showMessage('Transaction rejected by user.', 'error');
-    } else {
-      showMessage('Mint failed: ' + error.message, 'error');
-    }
+    // Refresh contract info
+    await updateContractInfo();
+    
+  } catch (e) {
+    console.error('Mint error:', e);
+    alert('❌ Mint failed: ' + (e.reason || e.message));
   }
 }
 
-// Show minted NFT preview
-function showMintedNFT(tokenId) {
-  const modal = document.createElement('div');
-  modal.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.9);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-  `;
-  
-  modal.innerHTML = `
-    <div style="text-align: center; padding: 40px; border: 2px solid #00ff41; background: #0a0a0f; max-width: 400px;">
-      <h2 style="color: #00ff41; margin-bottom: 20px;">🎉 MINTED!</h2>
-      <img src="nfts/${tokenId}.png" alt="POKSO #${tokenId}" style="width: 250px; height: 250px; border: 2px solid #ff00ff; margin: 20px 0;">
-      <p style="color: #ff00ff; font-size: 1.5rem; font-weight: bold;">POKSO #${String(tokenId).padStart(3, '0')}</p>
-      <p style="color: #00ff41; margin: 10px 0;">Welcome to the cyberpunk future!</p>
-      <button onclick="this.parentElement.parentElement.remove()" style="
-        background: #ff00ff;
-        border: none;
-        color: white;
-        padding: 15px 40px;
-        font-size: 1.2rem;
-        cursor: pointer;
-        margin-top: 20px;
-        font-family: 'Courier New', monospace;
-      ">CLOSE</button>
-    </div>
-  `;
-  
-  document.body.appendChild(modal);
-}
-
-// Check if user has minted before
-async function checkMintedCount() {
-  if (!signer) return 0;
-  
-  try {
-    // In production, query the contract for user's minted count
-    return 0;
-  } catch (error) {
-    console.error('Error checking minted count:', error);
-    return 0;
+// Check if already connected on load
+window.addEventListener('load', async () => {
+  if (window.ethereum && window.ethereum.selectedAddress) {
+    await connectUP();
   }
-}
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
-  // Check if already connected
-  if (window.lukso && window.lukso.selectedAddress) {
-    connectUP();
-  }
-  
-  // Add animation styles
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes slideDown {
-      from { transform: translate(-50%, -100%); opacity: 0; }
-      to { transform: translate(-50%, 0); opacity: 1; }
-    }
-  `;
-  document.head.appendChild(style);
 });
-
-// Export functions for global access
-window.connectUP = connectUP;
-window.mintNFT = mintNFT;
