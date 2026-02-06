@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>POKSO Preview - 200 NFTs</title>
+  <style>
+    body { 
+      background: #0a0a0f; 
+      color: #fff; 
+      font-family: monospace;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 { 
+      text-align: center; 
+      color: #00ff41;
+      text-shadow: 0 0 10px #00ff41;
+    }
+    .info {
+      text-align: center;
+      color: #888;
+      margin-bottom: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .nft {
+      background: #1a1a2e;
+      border: 1px solid #333;
+      padding: 5px;
+      text-align: center;
+    }
+    .nft img {
+      width: 100%;
+      image-rendering: pixelated;
+    }
+    .nft span {
+      color: #ff00ff;
+      font-size: 12px;
+    }
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <h1>💚 POKSO COLLECTION 💚</h1>
+  <div class="info">
+    200 NFTs Cyberpunk | 5 LYX each | Max 10/wallet<br>
+    <span style="color:#ff00ff;">Launching Soon on LUKSO</span>
+  </div>
+  <div class="grid" id="grid"></div>
+  
+  <script>
+    const grid = document.getElementById('grid');
+    for(let i=0; i<200; i++) {
+      const div = document.createElement('div');
+      div.className = 'nft';
+      div.innerHTML = `<img src="https://pokso-nfts.netlify.app/nft-${i}.png" loading="lazy" alt="POKSO #${i}"><br><span>#${String(i).padStart(3,'0')}</span>`;
+      grid.appendChild(div);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POKSO - Cyberpunk NFT Collection</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0f;
+      color: #00ff41;
+      font-family: 'Courier New', monospace;
+      min-height: 100vh;
+    }
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(180deg, #0d0221 0%, #0a0a0f 100%);
+      border-bottom: 2px solid #00ff41;
+    }
+    h1 {
+      font-size: 4rem;
+      text-shadow: 0 0 20px #00ff41;
+      margin-bottom: 20px;
+    }
+    .subtitle {
+      color: #ff00ff;
+      font-size: 1.5rem;
+      margin-bottom: 40px;
+    }
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      margin-bottom: 40px;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 3rem;
+      color: #ff00ff;
+      text-shadow: 0 0 10px #ff00ff;
+    }
+    .stat-label {
+      color: #00ff41;
+      font-size: 0.9rem;
+    }
+    .connect-btn {
+      background: transparent;
+      border: 2px solid #00ff41;
+      color: #00ff41;
+      padding: 15px 40px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+    }
+    .connect-btn:hover {
+      background: #00ff41;
+      color: #0a0a0f;
+      box-shadow: 0 0 20px #00ff41;
+    }
+    .gallery {
+      padding: 40px 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .gallery h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 30px;
+      color: #ff00ff;
+    }
+    .nft-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 20px;
+    }
+    .nft-item {
+      background: #1a1a2e;
+      border: 1px solid #00ff41;
+      padding: 10px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    .nft-item:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #00ff41;
+    }
+    .nft-item img {
+      width: 100%;
+      height: auto;
+      image-rendering: pixelated;
+    }
+    .nft-id {
+      color: #ff00ff;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .mint-section {
+      text-align: center;
+      padding: 60px 20px;
+      background: #0d0221;
+      border-top: 2px solid #ff00ff;
+    }
+    .mint-btn {
+      background: #ff00ff;
+      border: none;
+      color: #fff;
+      padding: 20px 60px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    .mint-btn:hover {
+      box-shadow: 0 0 30px #ff00ff;
+      transform: scale(1.05);
+    }
+    .price {
+      font-size: 1.3rem;
+      margin: 20px 0;
+      color: #00ff41;
+    }
+    .footer {
+      text-align: center;
+      padding: 40px;
+      border-top: 1px solid #00ff41;
+      color: #636e72;
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1>POKSO</h1>
+    <p class="subtitle">Cyberpunk NFT Collection on LUKSO</p>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value">200</div>
+        <div class="stat-label">UNIQUE NFTS</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">5</div>
+        <div class="stat-label">LYX EACH</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">10</div>
+        <div class="stat-label">MAX PER WALLET</div>
+      </div>
+    </div>
+    <button class="connect-btn" onclick="connectUP()">Connect Universal Profile</button>
+  </div>
+
+  <div class="gallery">
+    <h2>Preview Collection</h2>
+    <div class="nft-grid" id="grid"></div>
+  </div>
+
+  <div class="mint-section">
+    <h2>Ready to Mint?</h2>
+    <p class="price">5 LYX per NFT | Max 10 per wallet</p>
+    <button class="mint-btn" onclick="mintNFT()">MINT NOW</button>
+  </div>
+
+  <div class="footer">
+    <p>Created by Openurmind 🆙 🐳 | POKSO Collection 2026</p>
+  </div>
+
+  <script>
+    // Load NFTs
+    const grid = document.getElementById('grid');
+    for(let i = 0; i < 20; i++) {
+      const div = document.createElement('div');
+      div.className = 'nft-item';
+      div.innerHTML = `<img src="nfts/${i}.png" alt="POKSO #${i}"><div class="nft-id">#${i}</div>`;
+      grid.appendChild(div);
+    }
+
+    function connectUP() {
+      alert('Connect Universal Profile - Coming soon!');
+    }
+
+    function mintNFT() {
+      alert('Mint function - Coming soon!');
+    }
+  </script>
+</body>
+</html>
