@@ -1,0 +1,13 @@
+{
+  "network": "lukso-mainnet",
+  "contractAddress": "0x9939bb3eD9A260F16DE25E6617bD53925f183139",
+  "status": "deploy_pending",
+  "deployer": "0xb3583A1c41ba77BD5960256aa36fc7DB5669312A",
+  "transactionHash": "0x53ced1e50ec5c9531a19945aba98c7ed9be7014e7061a01a98d7741aed0b2504",
+  "timestamp": "2026-02-06T14:22:00Z",
+  "note": "Contract deployment reverted - needs proper compilation with Hardhat",
+  "mintPrice": "5 LYX",
+  "totalSupply": 500,
+  "maxPerWallet": 10,
+  "upAddress": "0xBb045B6C2cA92984e8b6e8A4cc32f4236adEE37b"
+}

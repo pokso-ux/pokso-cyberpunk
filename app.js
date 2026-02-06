@@ -6,8 +6,8 @@ const MINT_PRICE = '5'; // LYX
 const MAX_PER_WALLET = 10;
 const COLLECTION_SIZE = 500;
 
-// Contract address for the NFT collection (to be deployed)
-const NFT_CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000000'; // Placeholder
+// Contract address for the NFT collection (deployment pending proper compilation)
+const NFT_CONTRACT_ADDRESS = '0x9939bb3eD9A260F16DE25E6617bD53925f183139'; // Deployed but needs verification
 
 let provider = null;
 let signer = null;
@@ -72,6 +72,9 @@ function updateUIConnected(address) {
   }
 }
 
+// Contract status - mock mode for now
+const CONTRACT_READY = false; // Set to true when contract is verified
+
 // Show message to user
 function showMessage(text, type = 'info') {
   // Remove existing messages
@@ -114,6 +117,14 @@ async function getRandomTokenId() {
 async function mintNFT() {
   if (!signer) {
     showMessage('Please connect your Universal Profile first!', 'error');
+    return;
+  }
+  
+  // Check if contract is ready
+  if (!CONTRACT_READY) {
+    showMessage('⚠️ Smart contract deployment in progress! Coming soon...', 'error');
+    console.log('Contract address:', NFT_CONTRACT_ADDRESS);
+    console.log('Status: Needs proper Hardhat compilation and redeployment');
     return;
   }
   
