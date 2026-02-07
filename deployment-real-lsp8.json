@@ -1,0 +1,15 @@
+{
+  "contractName": "POKSOLSP8Real",
+  "address": "0x4efa8D56534Aa50FE6B20Fcd39F45a8f5f3695e5",
+  "transactionHash": "0x88c463eeb3e2be59f88697c5655bfaec434b22feca182e39ab2142d79a1b6d16",
+  "deployer": "0xb3583A1c41ba77BD5960256aa36fc7DB5669312A",
+  "timestamp": "2026-02-07T08:55:16.566Z",
+  "network": "lukso-mainnet",
+  "chainId": 42,
+  "name": "POKSO Cyberpunk",
+  "symbol": "POKSO",
+  "baseURI": "https://pokso-ux.github.io/pokso-cyberpunk/nfts/",
+  "mintPrice": "5",
+  "totalSupply": 500,
+  "maxPerWallet": 10
+}

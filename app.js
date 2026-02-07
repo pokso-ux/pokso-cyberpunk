@@ -1,4 +1,4 @@
-// POKSO Cyberpunk - Mint Integration (LSP8 Version)
+// POKSO Cyberpunk - Mint Integration (REAL LSP8 Version)
 // Universal Profile connection and batch minting functionality
 
 const LUKSO_MAINNET = 'https://42.rpc.thirdweb.com';
@@ -6,30 +6,25 @@ const MINT_PRICE = '5'; // LYX
 const MAX_PER_WALLET = 10;
 const COLLECTION_SIZE = 500;
 
-// LSP8 CONTRACT ADDRESS
-const NFT_CONTRACT_ADDRESS = '0xD891aBDD7c3587abCcbD622D4Becb2E31c4D950f';
+// CLEAN ARCHITECTURE: Minter Contract (handles payments)
+const NFT_CONTRACT_ADDRESS = '0x16addb441f840c261504d9CfAc526B6b1345C6B4';
+const LSP8_CONTRACT_ADDRESS = '0x88Bc1269F85C6Bb83DC229ef9Cb45108F0947474'; // Pure LSP8 (for reference)
 
-// POKSOLSP8 ABI (LSP8 Standard)
+// POKSOMinterV2 ABI (Payment Handler)
 const NFT_ABI = [
-  "constructor(string,string,address,string)",
-  "function mint(uint256) payable",
-  "function batchMint(uint256) payable",
-  "function mintedCount() view returns (uint256)",
-  "function mintedByWallet(address) view returns (uint256)",
+  "constructor(address)",
+  "function mint() payable",
+  "function batchMint(uint256 amount) payable",
   "function mintPrice() view returns (uint256)",
-  "function maxPerWallet() view returns (uint256)",
-  "function totalSupply() view returns (uint256)",
-  "function currentTokenId() view returns (uint256)",
+  "function MAX_PER_WALLET() view returns (uint256)",
+  "function mintedByWallet(address) view returns (uint256)",
+  "function lsp8() view returns (address)",
   "function owner() view returns (address)",
-  "function getContractInfo() view returns (uint256,uint256,uint256,uint256,uint256)",
-  "function getTokensOwned(address) view returns (uint256[])",
-  "function getBaseURI() view returns (string)",
-  "function tokenOwnerOf(uint256) view returns (address)",
-  "function tokenIdsOf(address) view returns (uint256[])",
   "function withdraw()",
-  "function setBaseURI(string)",
-  "event Mint(address,uint256,uint256)",
-  "event BatchMint(address,uint256,uint256)"
+  "function getMintInfo(address user) view returns (uint256 minted, uint256 remaining, uint256 currentId)",
+  "event Mint(address indexed minter, bytes32 indexed tokenId, uint256 price)",
+  "event BatchMint(address indexed minter, uint256 amount, uint256 totalPrice)",
+  "event Withdrawal(address indexed owner, uint256 amount)"
 ];
 
 let provider = null;
@@ -159,14 +154,17 @@ function updateUIConnected(address) {
 async function updateContractInfo() {
   if (!nftContract) return;
   try {
-    const info = await nftContract.getContractInfo();
+    const mintPrice = await nftContract.mintPrice();
+    const maxPerWallet = await nftContract.MAX_PER_WALLET();
+    const mintInfo = await nftContract.getMintInfo(userAddress || upAddress);
+    
     const priceEl = document.getElementById('mint-price');
     const supplyEl = document.getElementById('minted-count');
     const maxEl = document.getElementById('max-per-wallet');
     
-    if (priceEl) priceEl.textContent = ethers.utils.formatEther(info[0]) + ' LYX';
-    if (supplyEl) supplyEl.textContent = info[3] + '/' + info[2];
-    if (maxEl) maxEl.textContent = info[1];
+    if (priceEl) priceEl.textContent = ethers.utils.formatEther(mintPrice) + ' LYX';
+    if (supplyEl) supplyEl.textContent = mintInfo.currentId + '/500';
+    if (maxEl) maxEl.textContent = maxPerWallet.toString();
   } catch (e) {
     console.error('Error fetching contract info:', e);
   }
@@ -212,8 +210,7 @@ async function mintNFT() {
     showMessage('Please confirm the transaction...', 'info');
     
     let tx;
-    // Always use batchMint - it automatically uses the next available tokenId
-    // This avoids "token already minted" errors
+    // Use batchMint - it automatically uses the next available tokenId
     tx = await nftContract.batchMint(mintQuantity, { value: totalPrice, gasLimit: 500000 });
     
     console.log('Transaction sent:', tx.hash);

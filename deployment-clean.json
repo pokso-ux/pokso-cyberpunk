@@ -1,0 +1,17 @@
+{
+  "network": "lukso-mainnet",
+  "chainId": 42,
+  "timestamp": "2026-02-07T10:29:41.882Z",
+  "deployer": "0xb3583A1c41ba77BD5960256aa36fc7DB5669312A",
+  "lsp8": {
+    "name": "POKSOLSP8Pure",
+    "address": "0x88Bc1269F85C6Bb83DC229ef9Cb45108F0947474",
+    "type": "Pure LSP8 NFT Contract"
+  },
+  "minter": {
+    "name": "POKSOMinterV2",
+    "address": "0x16addb441f840c261504d9CfAc526B6b1345C6B4",
+    "type": "Payment Handler",
+    "mintPrice": "5 LYX"
+  }
+}

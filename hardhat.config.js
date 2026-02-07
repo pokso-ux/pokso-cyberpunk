@@ -5,8 +5,8 @@ const fs = require('fs');
 // Load private key from file
 let privateKey;
 try {
-  privateKey = fs.readFileSync('/root/.openclaw/workspace/lukso_private_key.pem', 'utf8').trim();
-  // Ensure it starts with 0x
+  const keyData = JSON.parse(fs.readFileSync('/root/.openclaw/workspace/poki_key.json', 'utf8'));
+  privateKey = keyData.privateKey;
   if (!privateKey.startsWith('0x')) {
     privateKey = '0x' + privateKey;
   }
@@ -18,13 +18,26 @@ try {
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: {
-    version: '0.8.19',
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200
+    compilers: [
+      {
+        version: '0.8.17',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200
+          }
+        }
+      },
+      {
+        version: '0.8.19',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200
+          }
+        }
       }
-    }
+    ]
   },
   networks: {
     lukso: {
