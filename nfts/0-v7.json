@@ -1,0 +1,44 @@
+{
+  "LSP4Metadata": {
+    "name": "POKSO Cyberpunk #0",
+    "description": "A unique cyberpunk digital collectible from the POKSO collection on LUKSO.",
+    "links": [
+      {
+        "title": "Website",
+        "url": "https://pokso-ux.github.io/pokso-cyberpunk/"
+      }
+    ],
+    "icon": [
+      {
+        "width": 256,
+        "height": 256,
+        "url": "https://pokso-ux.github.io/pokso-cyberpunk/nfts/0.png",
+        "verification": {
+          "method": "keccak256(bytes)",
+          "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      }
+    ],
+    "images": [
+      [
+        {
+          "width": 1024,
+          "height": 1024,
+          "url": "https://pokso-ux.github.io/pokso-cyberpunk/nfts/0.png",
+          "verification": {
+            "method": "keccak256(bytes)",
+            "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        }
+      ]
+    ],
+    "assets": [],
+    "attributes": [
+      {
+        "key": "Token ID",
+        "value": "0",
+        "type": "number"
+      }
+    ]
+  }
+}

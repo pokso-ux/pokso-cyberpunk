@@ -1,0 +1,51 @@
+{
+  "network": "lukso-mainnet",
+  "chainId": 42,
+  "timestamp": "2026-02-07T14:03:00Z",
+  "deployer": "0xb3583A1c41ba77BD5960256aa36fc7DB5669312A",
+  "version": "V6",
+  "features": {
+    "freeMint": true,
+    "mintPrice": "0 LYX",
+    "maxSupply": 500,
+    "maxPerWallet": 10
+  },
+  "contracts": {
+    "POKSOLSP8PureV6": {
+      "address": "0x11Eb80ef335F3E08eAA87c97947e23C0c621708D",
+      "name": "POKSO Cyberpunk V6",
+      "symbol": "POKSO",
+      "type": "LSP8 Identifiable Digital Asset",
+      "verified": true
+    },
+    "POKSOMinterV6": {
+      "address": "0xE566598AB8C00b3D24feD0E7c9C7Fc05901AE547",
+      "type": "Free Mint Handler",
+      "verified": true
+    }
+  },
+  "tokens": {
+    "token0": {
+      "id": "0",
+      "owner": "0xb3583A1c41ba77BD5960256aa36fc7DB5669312A",
+      "metadataURL": "https://pokso-ux.github.io/pokso-mint-site/nfts/0.json",
+      "imageURL": "https://pokso-ux.github.io/pokso-cyberpunk/nfts/0.png",
+      "status": "metadata_url_broken_but_image_works"
+    },
+    "token1": {
+      "id": "1",
+      "owner": "0xb3583A1c41ba77BD5960256aa36fc7DB5669312A",
+      "metadataURL": "https://pokso-ux.github.io/pokso-cyberpunk/nfts/1.json",
+      "imageURL": "https://pokso-ux.github.io/pokso-cyberpunk/nfts/1.png",
+      "status": "working"
+    }
+  },
+  "metadata": {
+    "baseURI": "https://pokso-ux.github.io/pokso-cyberpunk/nfts/",
+    "collectionMetadataURL": "https://pokso-ux.github.io/pokso-cyberpunk/lsp4-metadata.json",
+    "imageDisplayVerified": true
+  },
+  "explorer": {
+    "url": "https://explorer.execution.mainnet.lukso.network/token/0x11Eb80ef335F3E08eAA87c97947e23C0c621708D"
+  }
+}

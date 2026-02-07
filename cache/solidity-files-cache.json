@@ -1250,8 +1250,8 @@
       ]
     },
     "/root/.openclaw/workspace/pokso-mint-site/contracts/POKSOMinterV2.sol": {
-      "lastModificationDate": 1770465566083,
-      "contentHash": "19c46d9510a55a7211bde3f4cda34bf9",
+      "lastModificationDate": 1770472966891,
+      "contentHash": "fc554b7474a02dda084b262a66431fdb",
       "sourceName": "contracts/POKSOMinterV2.sol",
       "solcConfig": {
         "version": "0.8.19",
@@ -1320,6 +1320,156 @@
         "^0.8.4"
       ],
       "artifacts": []
+    },
+    "/root/.openclaw/workspace/pokso-mint-site/contracts/POKSOLSP8PureV6.sol": {
+      "lastModificationDate": 1770473068073,
+      "contentHash": "1868aa107846129be42adf320cfedff8",
+      "sourceName": "contracts/POKSOLSP8PureV6.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8IdentifiableDigitalAsset.sol",
+        "@lukso/lsp-smart-contracts/contracts/LSP4DigitalAssetMetadata/LSP4Constants.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "POKSOLSP8PureV6"
+      ]
+    },
+    "/root/.openclaw/workspace/pokso-mint-site/contracts/POKSOMinterV6.sol": {
+      "lastModificationDate": 1770473095519,
+      "contentHash": "53606cde62045648c2c53bcdfe7de442",
+      "sourceName": "contracts/POKSOMinterV6.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "IPOKSOLSP8PureV6",
+        "POKSOMinterV6",
+        "ReentrancyGuard"
+      ]
+    },
+    "/root/.openclaw/workspace/pokso-mint-site/contracts/POKSOLSP8PureV7.sol": {
+      "lastModificationDate": 1770474077903,
+      "contentHash": "d57adabd811d176f17811230c081d7e7",
+      "sourceName": "contracts/POKSOLSP8PureV7.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8IdentifiableDigitalAsset.sol",
+        "@lukso/lsp-smart-contracts/contracts/LSP4DigitalAssetMetadata/LSP4Constants.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "POKSOLSP8PureV7"
+      ]
+    },
+    "/root/.openclaw/workspace/pokso-mint-site/contracts/POKSOMinterV7.sol": {
+      "lastModificationDate": 1770474116329,
+      "contentHash": "fab1c4233d499e0397c0bceb4bc626a5",
+      "sourceName": "contracts/POKSOMinterV7.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "IPOKSOLSP8PureV7",
+        "POKSOMinterV7",
+        "ReentrancyGuard"
+      ]
     }
   }
 }

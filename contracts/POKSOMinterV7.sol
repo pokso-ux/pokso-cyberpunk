@@ -1,24 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-interface IPOKSOLSP8Pure {
+interface IPOKSOLSP8PureV7 {
     function mintTo(address recipient) external returns (bytes32 tokenId);
     function batchMintTo(address recipient, uint256 amount) external;
     function currentTokenId() external view returns (uint256);
-    function setLSP4Metadata(bytes memory metadataURI) external;
+    function setLSP4Metadata(bytes32 metadataHash, bytes memory metadataURI) external;
     function addCreator(address creatorAddress) external;
     function setTokenMetadataBaseURI(bytes memory baseURI) external;
     function getTokenMetadataBaseURI() external view returns (bytes memory);
 }
 
-/**
- * @dev Simple reentrancy guard
- */
 abstract contract ReentrancyGuard {
     uint256 private _status;
-    
     modifier nonReentrant() {
-        require(_status != 1, "ReentrancyGuard: reentrant call");
+        require(_status != 1, "Reentrant call");
         _status = 1;
         _;
         _status = 0;
@@ -26,47 +22,40 @@ abstract contract ReentrancyGuard {
 }
 
 /**
- * @title POKSOMinterV2
- * @dev Handles payments (5 LYX) and mints via POKSOLSP8Pure
- * Clean separation: LSP8 contract stays pure, this contract handles payments
+ * @title POKSOMinterV7
+ * @dev Free mint with proper VerifiableURI support
  */
-contract POKSOMinterV2 is ReentrancyGuard {
+contract POKSOMinterV7 is ReentrancyGuard {
     
-    uint256 public MINT_PRICE = 5 ether;
-    
-    event MintPriceChanged(uint256 oldPrice, uint256 newPrice);
+    uint256 public MINT_PRICE = 0; // Free mint for testing
     uint256 public constant MAX_PER_WALLET = 10;
     
-    IPOKSOLSP8Pure public lsp8;
+    IPOKSOLSP8PureV7 public lsp8;
     mapping(address => uint256) public mintedByWallet;
     address public owner;
     
     event Mint(address indexed minter, bytes32 indexed tokenId, uint256 price);
     event BatchMint(address indexed minter, uint256 amount, uint256 totalPrice);
-    event Withdrawal(address indexed owner, uint256 amount);
+    event MintPriceChanged(uint256 oldPrice, uint256 newPrice);
     
     modifier onlyOwner() {
-        require(msg.sender == owner, "POKSOMinterV2: not owner");
+        require(msg.sender == owner, "Not owner");
         _;
     }
     
     constructor(address lsp8Address) {
-        lsp8 = IPOKSOLSP8Pure(lsp8Address);
+        lsp8 = IPOKSOLSP8PureV7(lsp8Address);
         owner = msg.sender;
     }
     
-    /**
-     * @notice Mint a single POKSO NFT for 5 LYX
-     */
     function mint() external payable nonReentrant {
-        require(msg.value >= MINT_PRICE, "POKSOMinterV2: insufficient payment");
-        require(mintedByWallet[msg.sender] < MAX_PER_WALLET, "POKSOMinterV2: max per wallet");
-        require(lsp8.currentTokenId() < 500, "POKSOMinterV2: max supply reached");
+        require(msg.value >= MINT_PRICE, "Insufficient payment");
+        require(mintedByWallet[msg.sender] < MAX_PER_WALLET, "Max per wallet reached");
+        require(lsp8.currentTokenId() < 500, "Max supply reached");
         
         bytes32 tokenId = lsp8.mintTo(msg.sender);
         mintedByWallet[msg.sender]++;
         
-        // Refund excess
         if (msg.value > MINT_PRICE) {
             payable(msg.sender).transfer(msg.value - MINT_PRICE);
         }
@@ -74,22 +63,17 @@ contract POKSOMinterV2 is ReentrancyGuard {
         emit Mint(msg.sender, tokenId, MINT_PRICE);
     }
     
-    /**
-     * @notice Batch mint multiple POKSO NFTs
-     * @param amount Number of NFTs to mint (1-10)
-     */
     function batchMint(uint256 amount) external payable nonReentrant {
-        require(amount > 0 && amount <= 10, "POKSOMinterV2: invalid amount");
-        require(mintedByWallet[msg.sender] + amount <= MAX_PER_WALLET, "POKSOMinterV2: exceeds max per wallet");
-        require(lsp8.currentTokenId() + amount <= 500, "POKSOMinterV2: not enough supply");
+        require(amount > 0 && amount <= 10, "Invalid amount");
+        require(mintedByWallet[msg.sender] + amount <= MAX_PER_WALLET, "Exceeds max per wallet");
+        require(lsp8.currentTokenId() + amount <= 500, "Not enough supply");
         
         uint256 totalPrice = MINT_PRICE * amount;
-        require(msg.value >= totalPrice, "POKSOMinterV2: insufficient payment");
+        require(msg.value >= totalPrice, "Insufficient payment");
         
         lsp8.batchMintTo(msg.sender, amount);
         mintedByWallet[msg.sender] += amount;
         
-        // Refund excess
         if (msg.value > totalPrice) {
             payable(msg.sender).transfer(msg.value - totalPrice);
         }
@@ -97,22 +81,13 @@ contract POKSOMinterV2 is ReentrancyGuard {
         emit BatchMint(msg.sender, amount, totalPrice);
     }
     
-    /**
-     * @notice Withdraw all collected funds
-     */
     function withdraw() external onlyOwner {
         uint256 balance = address(this).balance;
-        require(balance > 0, "POKSOMinterV2: no funds");
-        
+        require(balance > 0, "No funds");
         (bool success, ) = payable(owner).call{value: balance}("");
-        require(success, "POKSOMinterV2: transfer failed");
-        
-        emit Withdrawal(owner, balance);
+        require(success, "Transfer failed");
     }
     
-    /**
-     * @notice Get mint info for an address
-     */
     function getMintInfo(address user) external view returns (
         uint256 minted,
         uint256 remaining,
@@ -122,49 +97,26 @@ contract POKSOMinterV2 is ReentrancyGuard {
         remaining = MAX_PER_WALLET - minted;
         currentId = lsp8.currentTokenId();
     }
-
-    /**
-     * @notice Set mint price (owner only)
-     * @param newPrice New price in wei
-     */
+    
     function setMintPrice(uint256 newPrice) external onlyOwner {
         uint256 oldPrice = MINT_PRICE;
         MINT_PRICE = newPrice;
         emit MintPriceChanged(oldPrice, newPrice);
     }
     
-    /**
-     * @notice Set LSP4 Metadata for the collection (owner only)
-     * @param metadataURI URI pointing to LSP4 metadata JSON
-     */
-    function setLSP4Metadata(bytes memory metadataURI) external onlyOwner {
-        lsp8.setLSP4Metadata(metadataURI);
+    function setLSP4Metadata(bytes32 metadataHash, bytes memory metadataURI) external onlyOwner {
+        lsp8.setLSP4Metadata(metadataHash, metadataURI);
     }
     
-    /**
-     * @notice Add a creator to LSP4Creators array (owner only)
-     * @param creatorAddress Address of the creator
-     */
     function addCreator(address creatorAddress) external onlyOwner {
         lsp8.addCreator(creatorAddress);
     }
-
-    /**
-     * @notice Set the base URI for LSP8 token metadata (owner only)
-     * @param baseURI Base URI like "https://pokso-ux.github.io/pokso-cyberpunk/nfts/"
-     */
+    
     function setTokenMetadataBaseURI(bytes memory baseURI) external onlyOwner {
         lsp8.setTokenMetadataBaseURI(baseURI);
     }
-
-    /**
-     * @notice Get the base URI for token metadata
-     */
-    function getTokenMetadataBaseURI() external view returns (bytes memory) {
-        return lsp8.getTokenMetadataBaseURI();
-    }
     
     receive() external payable {
-        revert("POKSOMinterV2: use mint() or batchMint()");
+        revert("Use mint() or batchMint()");
     }
 }
