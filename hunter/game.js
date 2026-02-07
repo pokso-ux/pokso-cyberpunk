@@ -353,13 +353,8 @@ function closeNFT() {
     isPaused = false;
 }
 
-// Mint NFT (placeholder - needs contract integration)
+// Claim NFT - Shows success message (no actual mint for now)
 async function mintNFT() {
-    if (!window.ethereum && !window.lukso) {
-        alert('Please connect your Universal Profile first!');
-        return;
-    }
-    
     const nft = window.currentNFT;
     
     // Mark as found
@@ -369,9 +364,20 @@ async function mintNFT() {
     // Update UI
     document.getElementById('nft-count').textContent = foundNFTs.length;
     
-    // Here you would call the actual mint contract
-    // For now, just simulate
-    alert(`🎉 Congratulations! You claimed ${nft.name}!\n\nIn the full version, this would mint the NFT to your Universal Profile.`);
+    // Show success message
+    const successMsg = `
+🎉 CONGRATULATIONS! 🎉
+
+You found: ${nft.name}
+
+In the full version, this NFT would be minted to your Universal Profile.
+
+Keep hunting to find all 5 hidden NFTs!
+
+[${foundNFTs.length}/5 found]
+    `;
+    
+    alert(successMsg);
     
     closeNFT();
     
@@ -379,6 +385,13 @@ async function mintNFT() {
     const spot = nftSpots.find(s => s.nftData.id === nft.id);
     if (spot) {
         spot.destroy();
+    }
+    
+    // Check if all NFTs found
+    if (foundNFTs.length === 5) {
+        setTimeout(() => {
+            alert(`🏆 AMAZING! 🏆\n\nYou found all 5 hidden NFTs!\nTime: ${document.getElementById('game-time').textContent}\n\nYou're a true POKSO Hunter!`);
+        }, 500);
     }
 }
 
