@@ -2,6 +2,7 @@
 pragma solidity ^0.8.17;
 
 import {LSP8IdentifiableDigitalAsset} from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8IdentifiableDigitalAsset.sol";
+import {_LSP4_METADATA_KEY, _LSP4_CREATORS_ARRAY_KEY, _LSP4_CREATORS_MAP_KEY_PREFIX} from "@lukso/lsp-smart-contracts/contracts/LSP4DigitalAssetMetadata/LSP4Constants.sol";
 
 /**
  * @title POKSOLSP8Pure
@@ -46,5 +47,40 @@ contract POKSOLSP8Pure is LSP8IdentifiableDigitalAsset {
             _mint(recipient, bytes32(currentTokenId), true, "");
             currentTokenId++;
         }
+    }
+
+    /**
+     * @notice Set LSP4 Metadata for the collection (owner only)
+     * @param metadataURI URI pointing to LSP4 metadata JSON (ipfs:// or https://)
+     */
+    function setLSP4Metadata(bytes memory metadataURI) external onlyOwner {
+        _setData(_LSP4_METADATA_KEY, metadataURI);
+    }
+
+    /**
+     * @notice Add a creator to LSP4Creators array (owner only)
+     * @param creatorAddress Address of the creator
+     */
+    function addCreator(address creatorAddress) external onlyOwner {
+        // Get current array length
+        bytes memory existingCreators = _getData(_LSP4_CREATORS_ARRAY_KEY);
+        uint256 newIndex = 0;
+        
+        if (existingCreators.length >= 32) {
+            assembly {
+                newIndex := mload(add(existingCreators, 32))
+            }
+        }
+        
+        // Add creator to array
+        bytes32 indexKey = keccak256(abi.encodePacked(_LSP4_CREATORS_ARRAY_KEY, newIndex));
+        _setData(indexKey, abi.encodePacked(creatorAddress));
+        
+        // Update array length
+        _setData(_LSP4_CREATORS_ARRAY_KEY, abi.encodePacked(uint128(newIndex + 1), uint128(newIndex + 1)));
+        
+        // Set creator map
+        bytes32 creatorMapKey = bytes32(bytes.concat(_LSP4_CREATORS_MAP_KEY_PREFIX, bytes20(creatorAddress)));
+        _setData(creatorMapKey, hex"01");
     }
 }

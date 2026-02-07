@@ -5,6 +5,22 @@ interface IPOKSOLSP8Pure {
     function mintTo(address recipient) external returns (bytes32 tokenId);
     function batchMintTo(address recipient, uint256 amount) external;
     function currentTokenId() external view returns (uint256);
+    function setLSP4Metadata(bytes memory metadataURI) external;
+    function addCreator(address creatorAddress) external;
+}
+
+/**
+ * @dev Simple reentrancy guard
+ */
+abstract contract ReentrancyGuard {
+    uint256 private _status;
+    
+    modifier nonReentrant() {
+        require(_status != 1, "ReentrancyGuard: reentrant call");
+        _status = 1;
+        _;
+        _status = 0;
+    }
 }
 
 /**
@@ -12,7 +28,7 @@ interface IPOKSOLSP8Pure {
  * @dev Handles payments (5 LYX) and mints via POKSOLSP8Pure
  * Clean separation: LSP8 contract stays pure, this contract handles payments
  */
-contract POKSOMinterV2 {
+contract POKSOMinterV2 is ReentrancyGuard {
     
     uint256 public constant MINT_PRICE = 5 ether;
     uint256 public constant MAX_PER_WALLET = 10;
@@ -38,7 +54,7 @@ contract POKSOMinterV2 {
     /**
      * @notice Mint a single POKSO NFT for 5 LYX
      */
-    function mint() external payable {
+    function mint() external payable nonReentrant {
         require(msg.value >= MINT_PRICE, "POKSOMinterV2: insufficient payment");
         require(mintedByWallet[msg.sender] < MAX_PER_WALLET, "POKSOMinterV2: max per wallet");
         require(lsp8.currentTokenId() < 500, "POKSOMinterV2: max supply reached");
@@ -58,7 +74,7 @@ contract POKSOMinterV2 {
      * @notice Batch mint multiple POKSO NFTs
      * @param amount Number of NFTs to mint (1-10)
      */
-    function batchMint(uint256 amount) external payable {
+    function batchMint(uint256 amount) external payable nonReentrant {
         require(amount > 0 && amount <= 10, "POKSOMinterV2: invalid amount");
         require(mintedByWallet[msg.sender] + amount <= MAX_PER_WALLET, "POKSOMinterV2: exceeds max per wallet");
         require(lsp8.currentTokenId() + amount <= 500, "POKSOMinterV2: not enough supply");
@@ -101,6 +117,22 @@ contract POKSOMinterV2 {
         minted = mintedByWallet[user];
         remaining = MAX_PER_WALLET - minted;
         currentId = lsp8.currentTokenId();
+    }
+    
+    /**
+     * @notice Set LSP4 Metadata for the collection (owner only)
+     * @param metadataURI URI pointing to LSP4 metadata JSON
+     */
+    function setLSP4Metadata(bytes memory metadataURI) external onlyOwner {
+        lsp8.setLSP4Metadata(metadataURI);
+    }
+    
+    /**
+     * @notice Add a creator to LSP4Creators array (owner only)
+     * @param creatorAddress Address of the creator
+     */
+    function addCreator(address creatorAddress) external onlyOwner {
+        lsp8.addCreator(creatorAddress);
     }
     
     receive() external payable {

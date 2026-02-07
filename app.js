@@ -6,11 +6,11 @@ const MINT_PRICE = '5'; // LYX
 const MAX_PER_WALLET = 10;
 const COLLECTION_SIZE = 500;
 
-// CLEAN ARCHITECTURE: Minter Contract (handles payments)
-const NFT_CONTRACT_ADDRESS = '0x16addb441f840c261504d9CfAc526B6b1345C6B4';
-const LSP8_CONTRACT_ADDRESS = '0x88Bc1269F85C6Bb83DC229ef9Cb45108F0947474'; // Pure LSP8 (for reference)
+// CLEAN ARCHITECTURE: Minter Contract V3 (handles payments + LSP4 metadata)
+const NFT_CONTRACT_ADDRESS = '0x9Ff1adC71C97EA7C137bf5454D3E941bFD65a0C4';
+const LSP8_CONTRACT_ADDRESS = '0xE63679a3F0114728375d34B8CC28569a95C6dD96'; // Pure LSP8 (for reference)
 
-// POKSOMinterV2 ABI (Payment Handler)
+// POKSOMinterV2 ABI V3 (Payment Handler + LSP4 Metadata)
 const NFT_ABI = [
   "constructor(address)",
   "function mint() payable",
@@ -22,6 +22,8 @@ const NFT_ABI = [
   "function owner() view returns (address)",
   "function withdraw()",
   "function getMintInfo(address user) view returns (uint256 minted, uint256 remaining, uint256 currentId)",
+  "function setLSP4Metadata(bytes metadataURI)",
+  "function addCreator(address creatorAddress)",
   "event Mint(address indexed minter, bytes32 indexed tokenId, uint256 price)",
   "event BatchMint(address indexed minter, uint256 amount, uint256 totalPrice)",
   "event Withdrawal(address indexed owner, uint256 amount)"
