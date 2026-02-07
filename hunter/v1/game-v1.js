@@ -57,6 +57,10 @@ class MainScene extends Phaser.Scene {
         // Setup
         this.mapSize = 4096;
         this.tileSize = 64;
+        
+        // IMPORTANT: Définir couleur de fond (sinon noir)
+        this.cameras.main.setBackgroundColor('#1a1a2e');
+        
         this.zones = [
             { name: 'Emerald Forest', x: 0, y: 0 },
             { name: 'Sapphire Ocean', x: 1365, y: 0 },
@@ -69,7 +73,7 @@ class MainScene extends Phaser.Scene {
             { name: 'Slate Peaks', x: 2730, y: 2730 }
         ];
 
-        // Générer monde (async pour montrer la barre de progression)
+        // Générer monde
         await this.generateWorld();
         
         // Player
@@ -103,48 +107,41 @@ class MainScene extends Phaser.Scene {
         const totalTiles = 64 * 64;
         let loadedTiles = 0;
         
-        // Generate tiles in batches to allow UI updates
-        const generateBatch = (startY, batchSize) => {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    const endY = Math.min(startY + batchSize, 64);
-                    
-                    for (let y = startY; y < endY; y++) {
-                        for (let x = 0; x < 64; x++) {
-                            const worldX = x * this.tileSize;
-                            const worldY = y * this.tileSize;
-                            
-                            // Déterminer zone
-                            const zoneX = Math.floor(x / 22);
-                            const zoneY = Math.floor(y / 22);
-                            const zoneIdx = Math.min(8, zoneY * 3 + zoneX);
-                            
-                            this.add.image(worldX + 32, worldY + 32, `tile-${zoneIdx}`);
-                            loadedTiles++;
-                        }
-                    }
-                    
-                    // Update progress
-                    const progress = Math.floor((loadedTiles / totalTiles) * 100);
-                    if (loadingBar) loadingBar.style.width = `${progress}%`;
-                    if (loadingPercent) loadingPercent.textContent = `${progress}%`;
-                    if (loadingText) loadingText.textContent = `Generating world... ${progress}%`;
-                    
-                    resolve();
-                }, 10);
-            });
-        };
-        
-        // Generate in 8 batches of 8 rows each
-        for (let batch = 0; batch < 8; batch++) {
-            await generateBatch(batch * 8, 8);
+        // Générer tuiles ligne par ligne avec vraie mise à jour UI
+        for (let y = 0; y < 64; y++) {
+            for (let x = 0; x < 64; x++) {
+                const worldX = x * this.tileSize;
+                const worldY = y * this.tileSize;
+                
+                // Déterminer zone (3x3 grid)
+                const zoneX = Math.floor(x / 22);
+                const zoneY = Math.floor(y / 22);
+                const zoneIdx = Math.min(8, zoneY * 3 + zoneX);
+                
+                // Créer la tuile
+                const tile = this.add.image(worldX + 32, worldY + 32, `tile-${zoneIdx}`);
+                tile.setDepth(0); // S'assurer qu'elle est en arrière-plan
+                loadedTiles++;
+            }
+            
+            // Update UI après chaque ligne
+            const progress = Math.floor((loadedTiles / totalTiles) * 100);
+            if (loadingBar) loadingBar.style.width = `${progress}%`;
+            if (loadingPercent) loadingPercent.textContent = `${progress}%`;
+            if (loadingText) loadingText.textContent = `Generating tiles... ${loadedTiles}/${totalTiles}`;
+            
+            // Laisser respirer le navigateur tous les 8 lignes
+            if (y % 8 === 0) {
+                await new Promise(resolve => requestAnimationFrame(resolve));
+            }
         }
         
         if (loadingText) loadingText.textContent = 'Creating borders...';
         
-        // Bordures zones
+        // Bordures zones (lignes blanches)
         const graphics = this.add.graphics();
-        graphics.lineStyle(4, 0xffffff, 0.3);
+        graphics.lineStyle(4, 0xffffff, 0.5);
+        graphics.beginPath();
         [1365, 2730].forEach(pos => {
             graphics.moveTo(pos, 0);
             graphics.lineTo(pos, this.mapSize);
@@ -152,20 +149,22 @@ class MainScene extends Phaser.Scene {
             graphics.lineTo(this.mapSize, pos);
         });
         graphics.strokePath();
+        graphics.setDepth(1);
         
         if (loadingText) loadingText.textContent = 'Spawning NFTs...';
         
-        // Hide loading screen after a brief delay
-        setTimeout(() => {
-            const loadingScreen = document.getElementById('loading');
-            if (loadingScreen) {
-                loadingScreen.style.transition = 'opacity 0.5s';
-                loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                }, 500);
-            }
-        }, 300);
+        // Petite pause pour montrer 100%
+        await new Promise(r => setTimeout(r, 200));
+        
+        // Cacher l'écran de chargement
+        const loadingScreen = document.getElementById('loading');
+        if (loadingScreen) {
+            loadingScreen.style.transition = 'opacity 0.5s';
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 500);
+        }
     }
 
     createNFTs() {
