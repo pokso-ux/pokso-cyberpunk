@@ -1,14 +1,42 @@
-import '@nomicfoundation/hardhat-toolbox';
+require('@nomicfoundation/hardhat-toolbox');
 
-const PRIVATE_KEY = '0xb440b2fa48ecf77e42562e2093918fa538aee6fe95cf99d4259acf98fc65bca4';
+const fs = require('fs');
 
-export default {
-  solidity: '0.8.19',
+// Load private key from file
+let privateKey;
+try {
+  privateKey = fs.readFileSync('/root/.openclaw/workspace/lukso_private_key.pem', 'utf8').trim();
+  // Ensure it starts with 0x
+  if (!privateKey.startsWith('0x')) {
+    privateKey = '0x' + privateKey;
+  }
+} catch (e) {
+  console.error('Could not load private key:', e.message);
+  process.exit(1);
+}
+
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  solidity: {
+    version: '0.8.19',
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200
+      }
+    }
+  },
   networks: {
     lukso: {
       url: 'https://42.rpc.thirdweb.com',
-      accounts: [PRIVATE_KEY],
+      accounts: [privateKey],
       chainId: 42
     }
+  },
+  paths: {
+    sources: './contracts',
+    tests: './test',
+    cache: './cache',
+    artifacts: './artifacts'
   }
 };

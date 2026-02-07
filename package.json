@@ -1,26 +1,14 @@
 {
-  "name": "pokso-cyberpunk",
-  "version": "1.0.0",
-  "description": "",
+  "name": "pokso-mint-site",
+  "version": "2.0.0",
+  "description": "POKSO Cyberpunk NFT Collection - LSP8 Compatible",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy": "node deploy-lsp8.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://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@github.com/pokso-ux/pokso-cyberpunk.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/pokso-ux/pokso-cyberpunk/issues"
-  },
-  "homepage": "https://github.com/pokso-ux/pokso-cyberpunk#readme",
-  "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
-    "ethers": "^6.16.0",
-    "hardhat": "^3.1.7"
-  },
-  "type": "module"
+  "dependencies": {
+    "ethers": "^5.7.2",
+    "@openzeppelin/contracts": "^4.9.3",
+    "solc": "^0.8.19"
+  }
 }
