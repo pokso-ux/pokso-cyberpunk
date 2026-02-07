@@ -4,6 +4,9 @@ pragma solidity ^0.8.17;
 import {LSP8IdentifiableDigitalAsset} from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8IdentifiableDigitalAsset.sol";
 import {_LSP4_METADATA_KEY, _LSP4_CREATORS_ARRAY_KEY, _LSP4_CREATORS_MAP_KEY_PREFIX} from "@lukso/lsp-smart-contracts/contracts/LSP4DigitalAssetMetadata/LSP4Constants.sol";
 
+// LSP8 Token Metadata Base URI key (keccak256('LSP8TokenMetadataBaseURI'))
+bytes32 constant _LSP8_TOKEN_METADATA_BASE_URI = 0x1a7628600c3bac7101f53697f48df381ddc36b9015e7d7c9c5633d1252aa2843;
+
 /**
  * @title POKSOLSP8Pure
  * @dev Pure LSP8 contract for POKSO Cyberpunk - Owner-only minting (no payments)
@@ -82,5 +85,20 @@ contract POKSOLSP8Pure is LSP8IdentifiableDigitalAsset {
         // Set creator map
         bytes32 creatorMapKey = bytes32(bytes.concat(_LSP4_CREATORS_MAP_KEY_PREFIX, bytes20(creatorAddress)));
         _setData(creatorMapKey, hex"01");
+    }
+
+    /**
+     * @notice Set the base URI for token metadata (owner only)
+     * @param baseURI Base URI pointing to token metadata JSONs (must end with /)
+     */
+    function setTokenMetadataBaseURI(bytes memory baseURI) external onlyOwner {
+        _setData(_LSP8_TOKEN_METADATA_BASE_URI, baseURI);
+    }
+
+    /**
+     * @notice Get the base URI for token metadata
+     */
+    function getTokenMetadataBaseURI() external view returns (bytes memory) {
+        return _getData(_LSP8_TOKEN_METADATA_BASE_URI);
     }
 }

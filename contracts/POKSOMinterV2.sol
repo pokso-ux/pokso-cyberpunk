@@ -7,6 +7,8 @@ interface IPOKSOLSP8Pure {
     function currentTokenId() external view returns (uint256);
     function setLSP4Metadata(bytes memory metadataURI) external;
     function addCreator(address creatorAddress) external;
+    function setTokenMetadataBaseURI(bytes memory baseURI) external;
+    function getTokenMetadataBaseURI() external view returns (bytes memory);
 }
 
 /**
@@ -133,6 +135,21 @@ contract POKSOMinterV2 is ReentrancyGuard {
      */
     function addCreator(address creatorAddress) external onlyOwner {
         lsp8.addCreator(creatorAddress);
+    }
+
+    /**
+     * @notice Set the base URI for LSP8 token metadata (owner only)
+     * @param baseURI Base URI like "https://pokso-ux.github.io/pokso-cyberpunk/nfts/"
+     */
+    function setTokenMetadataBaseURI(bytes memory baseURI) external onlyOwner {
+        lsp8.setTokenMetadataBaseURI(baseURI);
+    }
+
+    /**
+     * @notice Get the base URI for token metadata
+     */
+    function getTokenMetadataBaseURI() external view returns (bytes memory) {
+        return lsp8.getTokenMetadataBaseURI();
     }
     
     receive() external payable {

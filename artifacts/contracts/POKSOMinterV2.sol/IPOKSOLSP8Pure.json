@@ -48,6 +48,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "getTokenMetadataBaseURI",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -75,6 +88,19 @@
         }
       ],
       "name": "setLSP4Metadata",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "baseURI",
+          "type": "bytes"
+        }
+      ],
+      "name": "setTokenMetadataBaseURI",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

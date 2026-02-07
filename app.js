@@ -6,9 +6,9 @@ const MINT_PRICE = '5'; // LYX
 const MAX_PER_WALLET = 10;
 const COLLECTION_SIZE = 500;
 
-// CLEAN ARCHITECTURE: Minter Contract V3 (handles payments + LSP4 metadata)
-const NFT_CONTRACT_ADDRESS = '0x9Ff1adC71C97EA7C137bf5454D3E941bFD65a0C4';
-const LSP8_CONTRACT_ADDRESS = '0xE63679a3F0114728375d34B8CC28569a95C6dD96'; // Pure LSP8 (for reference)
+// CLEAN ARCHITECTURE: Minter Contract V4 (handles payments + LSP4 + LSP8 token metadata)
+const NFT_CONTRACT_ADDRESS = '0xe551195a85CE17A84dF5a59243dFFA161C528C44';
+const LSP8_CONTRACT_ADDRESS = '0xe21D4D028B66e3bcE4ffcEfF050661FE4788D3FA'; // Pure LSP8 (for reference)
 
 // POKSOMinterV2 ABI V3 (Payment Handler + LSP4 Metadata)
 const NFT_ABI = [
