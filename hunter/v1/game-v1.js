@@ -53,7 +53,7 @@ class MainScene extends Phaser.Scene {
         });
     }
 
-    create() {
+    async create() {
         // Setup
         this.mapSize = 4096;
         this.tileSize = 64;
@@ -69,8 +69,8 @@ class MainScene extends Phaser.Scene {
             { name: 'Slate Peaks', x: 2730, y: 2730 }
         ];
 
-        // Générer monde
-        this.generateWorld();
+        // Générer monde (async pour montrer la barre de progression)
+        await this.generateWorld();
         
         // Player
         this.player = this.physics.add.sprite(2048, 2048, 'player');
@@ -95,7 +95,7 @@ class MainScene extends Phaser.Scene {
         this.createParticles();
     }
 
-    generateWorld() {
+    async generateWorld() {
         const loadingBar = document.getElementById('loading-bar');
         const loadingText = document.getElementById('loading-text');
         const loadingPercent = document.getElementById('loading-percent');
@@ -103,29 +103,41 @@ class MainScene extends Phaser.Scene {
         const totalTiles = 64 * 64;
         let loadedTiles = 0;
         
-        // Grid 64x64 - with progress tracking
-        for (let y = 0; y < 64; y++) {
-            for (let x = 0; x < 64; x++) {
-                const worldX = x * this.tileSize;
-                const worldY = y * this.tileSize;
-                
-                // Déterminer zone
-                const zoneX = Math.floor(x / 22);
-                const zoneY = Math.floor(y / 22);
-                const zoneIdx = Math.min(8, zoneY * 3 + zoneX);
-                
-                this.add.image(worldX + 32, worldY + 32, `tile-${zoneIdx}`);
-                
-                loadedTiles++;
-                
-                // Update progress every 100 tiles
-                if (loadedTiles % 100 === 0 || loadedTiles === totalTiles) {
+        // Generate tiles in batches to allow UI updates
+        const generateBatch = (startY, batchSize) => {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    const endY = Math.min(startY + batchSize, 64);
+                    
+                    for (let y = startY; y < endY; y++) {
+                        for (let x = 0; x < 64; x++) {
+                            const worldX = x * this.tileSize;
+                            const worldY = y * this.tileSize;
+                            
+                            // Déterminer zone
+                            const zoneX = Math.floor(x / 22);
+                            const zoneY = Math.floor(y / 22);
+                            const zoneIdx = Math.min(8, zoneY * 3 + zoneX);
+                            
+                            this.add.image(worldX + 32, worldY + 32, `tile-${zoneIdx}`);
+                            loadedTiles++;
+                        }
+                    }
+                    
+                    // Update progress
                     const progress = Math.floor((loadedTiles / totalTiles) * 100);
                     if (loadingBar) loadingBar.style.width = `${progress}%`;
                     if (loadingPercent) loadingPercent.textContent = `${progress}%`;
-                    if (loadingText && progress < 100) loadingText.textContent = `Generating tiles... ${loadedTiles}/${totalTiles}`;
-                }
-            }
+                    if (loadingText) loadingText.textContent = `Generating world... ${progress}%`;
+                    
+                    resolve();
+                }, 10);
+            });
+        };
+        
+        // Generate in 8 batches of 8 rows each
+        for (let batch = 0; batch < 8; batch++) {
+            await generateBatch(batch * 8, 8);
         }
         
         if (loadingText) loadingText.textContent = 'Creating borders...';
@@ -141,11 +153,19 @@ class MainScene extends Phaser.Scene {
         });
         graphics.strokePath();
         
-        // Hide loading screen
+        if (loadingText) loadingText.textContent = 'Spawning NFTs...';
+        
+        // Hide loading screen after a brief delay
         setTimeout(() => {
             const loadingScreen = document.getElementById('loading');
-            if (loadingScreen) loadingScreen.style.display = 'none';
-        }, 500);
+            if (loadingScreen) {
+                loadingScreen.style.transition = 'opacity 0.5s';
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }
+        }, 300);
     }
 
     createNFTs() {
