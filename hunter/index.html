@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POKSO Hunter - Cyberpunk NFT Hunt</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0a0f;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #ui-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .wallet-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            padding: 10px 20px;
+            cursor: pointer;
+            pointer-events: auto;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        .wallet-btn:hover {
+            background: #00ff41;
+            color: #0a0a0f;
+        }
+        .inventory {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(10, 10, 15, 0.9);
+            border: 2px solid #00ff41;
+            padding: 15px;
+            pointer-events: auto;
+            max-width: 300px;
+        }
+        .inventory h3 {
+            margin-bottom: 10px;
+            color: #ff00ff;
+        }
+        .clue-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 10, 15, 0.95);
+            border: 3px solid #00ff41;
+            padding: 30px;
+            text-align: center;
+            pointer-events: auto;
+            display: none;
+            max-width: 500px;
+            box-shadow: 0 0 30px #00ff41;
+        }
+        .clue-box h2 {
+            color: #ff00ff;
+            margin-bottom: 15px;
+        }
+        .clue-box input {
+            background: #1a1a2e;
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            width: 100%;
+            margin: 10px 0;
+        }
+        .clue-box button {
+            background: #00ff41;
+            border: none;
+            color: #0a0a0f;
+            padding: 10px 30px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+        .clue-box button:hover {
+            box-shadow: 0 0 20px #00ff41;
+        }
+        .found-nft {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 10, 15, 0.95);
+            border: 3px solid #ff00ff;
+            padding: 40px;
+            text-align: center;
+            pointer-events: auto;
+            display: none;
+            box-shadow: 0 0 50px #ff00ff;
+        }
+        .found-nft h1 {
+            color: #ff00ff;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #ff00ff;
+        }
+        .found-nft img {
+            max-width: 200px;
+            border: 3px solid #00ff41;
+            margin: 20px 0;
+        }
+        .stats {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(10, 10, 15, 0.9);
+            border: 2px solid #00ff41;
+            padding: 15px;
+        }
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0f;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loading h1 {
+            color: #00ff41;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container"></div>
+    
+    <div id="ui-overlay">
+        <div class="stats">
+            <h3>🏆 Stats</h3>
+            <p>NFT Found: <span id="nft-count">0</span>/10</p>
+            <p>Time: <span id="game-time">00:00</span></p>
+        </div>
+        
+        <button class="wallet-btn" id="connect-wallet">Connect UP</button>
+        
+        <div class="inventory">
+            <h3>🎒 Clues</h3>
+            <ul id="clue-list">
+                <li>No clues yet...</li>
+            </ul>
+        </div>
+        
+        <div class="clue-box" id="clue-modal">
+            <h2>🔍 You found a clue!</h2>
+            <p id="clue-text">Riddle text here...</p>
+            <input type="text" id="clue-answer" placeholder="Enter answer...">
+            <br>
+            <button onclick="checkAnswer()">Submit</button>
+            <button onclick="closeClue()">Close</button>
+        </div>
+        
+        <div class="found-nft" id="nft-modal">
+            <h1>🎉 NFT FOUND!</h1>
+            <p>You discovered a hidden POKSO NFT!</p>
+            <img id="found-nft-image" src="" alt="NFT">
+            <p id="found-nft-name"></p>
+            <button onclick="mintNFT()">Claim NFT (0 LYX)</button>
+            <button onclick="closeNFT()">Continue Hunting</button>
+        </div>
+    </div>
+    
+    <div class="loading" id="loading-screen">
+        <h1>POKSO HUNTER</h1>
+        <p>Cyberpunk NFT Hunt Loading...</p>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
