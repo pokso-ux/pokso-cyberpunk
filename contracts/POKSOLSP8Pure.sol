@@ -36,7 +36,58 @@ contract POKSOLSP8Pure is LSP8IdentifiableDigitalAsset {
         require(currentTokenId < MAX_SUPPLY, "POKSOLSP8Pure: max supply reached");
         tokenId = bytes32(currentTokenId);
         _mint(recipient, tokenId, true, "");
+        
+        // Set token-specific metadata URL
+        _setTokenMetadataURL(tokenId);
+        
         currentTokenId++;
+    }
+    
+    /**
+     * @dev Internal function to set the metadata URL for a token
+     */
+    function _setTokenMetadataURL(bytes32 tokenId) internal {
+        bytes memory baseURI = _getData(_LSP8_TOKEN_METADATA_BASE_URI);
+        if (baseURI.length > 0) {
+            // Construct full URL: baseURI + tokenId (as string without 0x) + ".json"
+            string memory tokenIdStr = _bytes32ToString(tokenId);
+            string memory metadataURL = string(abi.encodePacked(
+                baseURI,
+                tokenIdStr,
+                ".json"
+            ));
+            // Store in token-specific data - using LSP4 metadata key for token
+            _setDataForTokenId(tokenId, _LSP4_METADATA_KEY, bytes(metadataURL));
+        }
+    }
+    
+    /**
+     * @dev Convert bytes32 to string (removes leading zeros)
+     */
+    function _bytes32ToString(bytes32 value) internal pure returns (string memory) {
+        // Convert to uint256 and then to string
+        uint256 intValue = uint256(value);
+        return _uintToString(intValue);
+    }
+    
+    /**
+     * @dev Convert uint to string
+     */
+    function _uintToString(uint256 value) internal pure returns (string memory) {
+        if (value == 0) return "0";
+        uint256 temp = value;
+        uint256 digits;
+        while (temp != 0) {
+            digits++;
+            temp /= 10;
+        }
+        bytes memory buffer = new bytes(digits);
+        while (value != 0) {
+            digits--;
+            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
+            value /= 10;
+        }
+        return string(buffer);
     }
     
     /**
@@ -47,7 +98,9 @@ contract POKSOLSP8Pure is LSP8IdentifiableDigitalAsset {
     function batchMintTo(address recipient, uint256 amount) external onlyOwner {
         require(currentTokenId + amount <= MAX_SUPPLY, "POKSOLSP8Pure: not enough supply");
         for (uint256 i = 0; i < amount; i++) {
-            _mint(recipient, bytes32(currentTokenId), true, "");
+            bytes32 tokenId = bytes32(currentTokenId);
+            _mint(recipient, tokenId, true, "");
+            _setTokenMetadataURL(tokenId);
             currentTokenId++;
         }
     }

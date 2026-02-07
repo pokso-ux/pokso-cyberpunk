@@ -1212,8 +1212,8 @@
       ]
     },
     "/root/.openclaw/workspace/pokso-mint-site/contracts/POKSOLSP8Pure.sol": {
-      "lastModificationDate": 1770465609471,
-      "contentHash": "ae7a83cacc688a724c9b720c4942be9e",
+      "lastModificationDate": 1770470601213,
+      "contentHash": "9a11ec3dd0d63b7be7bdb0e101dec684",
       "sourceName": "contracts/POKSOLSP8Pure.sol",
       "solcConfig": {
         "version": "0.8.19",
