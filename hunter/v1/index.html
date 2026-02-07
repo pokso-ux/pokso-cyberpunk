@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POKSO Hunter V1 - Cyberpunk NFT Hunt</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #050508;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #ui-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .hud-panel {
+            position: absolute;
+            background: rgba(5, 5, 8, 0.95);
+            border: 2px solid #00ff41;
+            padding: 15px;
+            pointer-events: auto;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        }
+        .top-left {
+            top: 20px;
+            left: 20px;
+            min-width: 200px;
+        }
+        .top-right {
+            top: 20px;
+            right: 20px;
+        }
+        .bottom-left {
+            bottom: 20px;
+            left: 20px;
+            max-width: 300px;
+        }
+        .bottom-right {
+            bottom: 20px;
+            right: 20px;
+        }
+        .abilities-bar {
+            display: flex;
+            gap: 10px;
+        }
+        .ability-slot {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #333;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .ability-slot.active {
+            border-color: #00ff41;
+            box-shadow: 0 0 15px #00ff41;
+        }
+        .ability-slot.cooldown {
+            opacity: 0.5;
+        }
+        .zone-indicator {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+        .stats-line {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #1a1a2e;
+            border: 1px solid #333;
+            margin-top: 5px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff41, #00f5ff);
+            transition: width 0.3s;
+        }
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(5, 5, 8, 0.98);
+            border: 3px solid #00ff41;
+            padding: 40px;
+            max-width: 600px;
+            text-align: center;
+            display: none;
+            pointer-events: auto;
+            box-shadow: 0 0 50px rgba(0, 255, 65, 0.5);
+        }
+        .modal h2 {
+            color: #ff00ff;
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #ff00ff;
+        }
+        .modal button {
+            background: #00ff41;
+            border: none;
+            color: #000;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            font-family: 'Courier New', monospace;
+        }
+        .modal button:hover {
+            box-shadow: 0 0 30px #00ff41;
+            transform: scale(1.05);
+        }
+        .rarity-common { color: #aaa; }
+        .rarity-uncommon { color: #00ff41; }
+        .rarity-rare { color: #00f5ff; }
+        .rarity-legendary { color: #ff00ff; text-shadow: 0 0 10px #ff00ff; }
+        .connect-btn {
+            background: transparent;
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+        .connect-btn:hover {
+            background: #00ff41;
+            color: #000;
+        }
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #050508;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loading-screen h1 {
+            font-size: 48px;
+            color: #00ff41;
+            text-shadow: 0 0 30px #00ff41;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container"></div>
+    
+    <div id="ui-layer">
+        <!-- Top Left: Zone & Stats -->
+        <div class="hud-panel top-left">
+            <div class="zone-indicator" id="current-zone">RUST LANDS</div>
+            <div class="stats-line">NFTs Found: <span id="nft-count">0</span>/15</div>
+            <div class="stats-line">Abilities: <span id="ability-count">0</span>/7</div>
+            <div class="stats-line">Master Key: <span id="key-parts">0</span>/4</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <!-- Top Right: Wallet -->
+        <div class="hud-panel top-right">
+            <button class="connect-btn" id="connect-btn">Connect UP</button>
+        </div>
+        
+        <!-- Bottom Left: Log -->
+        <div class="hud-panel bottom-left">
+            <div style="color: #ff00ff; font-weight: bold; margin-bottom: 10px;">📟 SYSTEM LOG</div>
+            <div id="game-log" style="font-size: 12px; max-height: 150px; overflow-y: auto;">
+                <div>Welcome to POKSO Hunter V1</div>
+                <div>Explore the map to find NFTs...</div>
+            </div>
+        </div>
+        
+        <!-- Bottom Right: Abilities -->
+        <div class="hud-panel bottom-right">
+            <div style="color: #ff00ff; font-weight: bold; margin-bottom: 10px;">⚡ ABILITIES</div>
+            <div class="abilities-bar" id="abilities-bar">
+                <div class="ability-slot" id="slot-1" title="No ability"></div>
+                <div class="ability-slot" id="slot-2" title="No ability"></div>
+                <div class="ability-slot" id="slot-3" title="No ability"></div>
+                <div class="ability-slot" id="slot-4" title="No ability"></div>
+            </div>
+            <div style="font-size: 11px; color: #666; margin-top: 5px;">
+                Press 1-4 to use • Find abilities in the world
+            </div>
+        </div>
+    </div>
+    
+    <!-- Discovery Modal -->
+    <div class="modal" id="discovery-modal">
+        <h2>🎉 NFT DISCOVERED!</h2>
+        <div id="discovered-nft-name" style="font-size: 20px; margin: 20px 0;"></div>
+        <div id="discovered-nft-rarity" style="font-size: 16px; margin: 10px 0;"></div>
+        <img id="discovered-nft-image" src="" alt="NFT" style="max-width: 200px; border: 3px solid #00ff41; margin: 20px 0;">
+        <div id="discovered-nft-effect" style="font-size: 14px; color: #00f5ff; margin: 10px 0;"></div>
+        <br>
+        <button onclick="claimDiscovery()">CLAIM NFT</button>
+        <button onclick="closeDiscovery()">Continue Exploring</button>
+    </div>
+    
+    <!-- Ability Unlocked Modal -->
+    <div class="modal" id="ability-modal">
+        <h2>⚡ NEW ABILITY!</h2>
+        <div id="ability-name" style="font-size: 24px; color: #ff00ff; margin: 20px 0;"></div>
+        <div id="ability-desc" style="font-size: 16px; margin: 10px 0;"></div>
+        <div id="ability-key" style="font-size: 14px; color: #00f5ff; margin: 20px 0;"></div>
+        <br>
+        <button onclick="closeAbility()">Awesome!</button>
+    </div>
+    
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading">
+        <h1>POKSO HUNTER V1</h1>
+        <p style="color: #ff00ff; margin-top: 20px;">Generating world...</p>
+        <p style="color: #666; font-size: 12px; margin-top: 10px;">Map: 4096x4096 | 15 Secrets | 7 Abilities</p>
+    </div>
+
+    <script src="game-v1.js"></script>
+</body>
+</html>
