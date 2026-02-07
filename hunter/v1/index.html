@@ -245,8 +245,15 @@
     <!-- Loading Screen -->
     <div class="loading-screen" id="loading">
         <h1>POKSO HUNTER V1</h1>
-        <p style="color: #ff00ff; margin-top: 20px;">Generating world...</p>
-        <p style="color: #666; font-size: 12px; margin-top: 10px;">Map: 4096x4096 | 15 Secrets | 7 Abilities</p>
+        <p style="color: #ff00ff; margin-top: 20px;" id="loading-text">Initializing...</p>
+        
+        <!-- Progress Bar -->
+        <div style="width: 400px; height: 20px; background: #1a1a2e; border: 2px solid #00ff41; margin-top: 30px; position: relative;">
+            <div id="loading-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #00ff41, #00f5ff); transition: width 0.1s;"></div>
+        </div>
+        <p style="color: #00ff41; margin-top: 10px; font-size: 14px;" id="loading-percent">0%</p>
+        
+        <p style="color: #666; font-size: 12px; margin-top: 20px;">Map: 4096x4096 | 15 Secrets | 7 Abilities</p>
     </div>
 
     <script src="game-v1.js"></script>

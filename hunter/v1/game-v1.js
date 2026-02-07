@@ -96,7 +96,14 @@ class MainScene extends Phaser.Scene {
     }
 
     generateWorld() {
-        // Grid 64x64
+        const loadingBar = document.getElementById('loading-bar');
+        const loadingText = document.getElementById('loading-text');
+        const loadingPercent = document.getElementById('loading-percent');
+        
+        const totalTiles = 64 * 64;
+        let loadedTiles = 0;
+        
+        // Grid 64x64 - with progress tracking
         for (let y = 0; y < 64; y++) {
             for (let x = 0; x < 64; x++) {
                 const worldX = x * this.tileSize;
@@ -108,8 +115,20 @@ class MainScene extends Phaser.Scene {
                 const zoneIdx = Math.min(8, zoneY * 3 + zoneX);
                 
                 this.add.image(worldX + 32, worldY + 32, `tile-${zoneIdx}`);
+                
+                loadedTiles++;
+                
+                // Update progress every 100 tiles
+                if (loadedTiles % 100 === 0 || loadedTiles === totalTiles) {
+                    const progress = Math.floor((loadedTiles / totalTiles) * 100);
+                    if (loadingBar) loadingBar.style.width = `${progress}%`;
+                    if (loadingPercent) loadingPercent.textContent = `${progress}%`;
+                    if (loadingText && progress < 100) loadingText.textContent = `Generating tiles... ${loadedTiles}/${totalTiles}`;
+                }
             }
         }
+        
+        if (loadingText) loadingText.textContent = 'Creating borders...';
         
         // Bordures zones
         const graphics = this.add.graphics();
@@ -121,6 +140,12 @@ class MainScene extends Phaser.Scene {
             graphics.lineTo(this.mapSize, pos);
         });
         graphics.strokePath();
+        
+        // Hide loading screen
+        setTimeout(() => {
+            const loadingScreen = document.getElementById('loading');
+            if (loadingScreen) loadingScreen.style.display = 'none';
+        }, 500);
     }
 
     createNFTs() {
