@@ -186,7 +186,14 @@
     <p>Created by Openurmind 🆙 🐳 | POKSO Collection 2026</p>
   </div>
 
-  <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script>
+    // Check if ethers loaded
+    if (typeof ethers === 'undefined') {
+      console.error('Ethers.js failed to load!');
+      document.body.innerHTML = '<div style="text-align:center;padding:50px;color:#ff0040;"><h2>❌ Error loading wallet library</h2><p>Please refresh the page or check your connection.</p><button onclick="location.reload()" style="padding:10px 30px;margin-top:20px;cursor:pointer;">Refresh</button></div>';
+    }
+  </script>
   <script src="app.js"></script>
   <script>
     // Load all 500 NFTs
