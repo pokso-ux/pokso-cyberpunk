@@ -1,0 +1,9 @@
+{
+  "LSP4Metadata": {
+    "name": "POKSO Cyberpunk",
+    "symbol": "POKSO",
+    "description": "A unique cyberpunk POKSO NFT from the collection",
+    "icon": [{"width": 256, "height": 256, "url": "ipfs://QmImageCID", "verification": {"method": "keccak256(bytes)", "data": "0x..."}}],
+    "images": [[{"width": 1024, "height": 1024, "url": "https://pokso-ux.github.io/pokso-cyberpunk/nfts/{tokenId}.png", "verification": {"method": "keccak256(bytes)", "data": "0x0000000000000000000000000000000000000000000000000000000000000000"}}]]
+  }
+}
