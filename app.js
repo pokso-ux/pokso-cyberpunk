@@ -154,19 +154,30 @@ function updateUIConnected(address) {
 }
 
 async function updateContractInfo() {
-  if (!nftContract) return;
   try {
-    const mintPrice = await nftContract.mintPrice();
-    const maxPerWallet = await nftContract.MAX_PER_WALLET();
-    const mintInfo = await nftContract.getMintInfo(userAddress || upAddress);
+    // Create a read-only provider to fetch minted count even when not connected
+    const provider = new ethers.providers.JsonRpcProvider(LUKSO_MAINNET);
+    const contract = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFT_ABI, provider);
     
-    const priceEl = document.getElementById('mint-price');
+    const mintPrice = await contract.mintPrice();
+    const maxPerWallet = await contract.MAX_PER_WALLET();
+    const currentId = await contract.lsp8().then(lsp8Addr => {
+      const lsp8 = new ethers.Contract(lsp8Addr, ["function currentTokenId() view returns (uint256)"], provider);
+      return lsp8.currentTokenId();
+    });
+    
     const supplyEl = document.getElementById('minted-count');
-    const maxEl = document.getElementById('max-per-wallet');
+    if (supplyEl) supplyEl.textContent = currentId.toString() + '/500';
     
-    if (priceEl) priceEl.textContent = ethers.utils.formatEther(mintPrice) + ' LYX';
-    if (supplyEl) supplyEl.textContent = mintInfo.currentId + '/500';
-    if (maxEl) maxEl.textContent = maxPerWallet.toString();
+    // Update user-specific info if connected
+    if (nftContract && (userAddress || upAddress)) {
+      const mintInfo = await nftContract.getMintInfo(userAddress || upAddress);
+      const priceEl = document.getElementById('mint-price');
+      const maxEl = document.getElementById('max-per-wallet');
+      
+      if (priceEl) priceEl.textContent = ethers.utils.formatEther(mintPrice) + ' LYX';
+      if (maxEl) maxEl.textContent = maxPerWallet.toString();
+    }
   } catch (e) {
     console.error('Error fetching contract info:', e);
   }
@@ -237,6 +248,9 @@ async function mintNFT() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Load minted count immediately
+  updateContractInfo();
+  
   if (window.lukso && window.lukso.selectedAddress) {
     connectUP();
   }
