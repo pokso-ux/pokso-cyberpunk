@@ -12,7 +12,7 @@ const NFT_CONTRACT_ADDRESS = '0xD891aBDD7c3587abCcbD622D4Becb2E31c4D950f';
 // POKSOLSP8 ABI (LSP8 Standard)
 const NFT_ABI = [
   "constructor(string,string,address,string)",
-  "function mint(bytes32) payable",
+  "function mint(uint256) payable",
   "function batchMint(uint256) payable",
   "function mintedCount() view returns (uint256)",
   "function mintedByWallet(address) view returns (uint256)",
@@ -22,13 +22,13 @@ const NFT_ABI = [
   "function currentTokenId() view returns (uint256)",
   "function owner() view returns (address)",
   "function getContractInfo() view returns (uint256,uint256,uint256,uint256,uint256)",
-  "function getTokensOwned(address) view returns (bytes32[])",
+  "function getTokensOwned(address) view returns (uint256[])",
   "function getBaseURI() view returns (string)",
-  "function tokenOwnerOf(bytes32) view returns (address)",
-  "function tokenIdsOf(address) view returns (bytes32[])",
+  "function tokenOwnerOf(uint256) view returns (address)",
+  "function tokenIdsOf(address) view returns (uint256[])",
   "function withdraw()",
   "function setBaseURI(string)",
-  "event Mint(address,bytes32,uint256)",
+  "event Mint(address,uint256,uint256)",
   "event BatchMint(address,uint256,uint256)"
 ];
 
@@ -213,7 +213,7 @@ async function mintNFT() {
     
     let tx;
     if (mintQuantity === 1) {
-      const tokenId = ethers.utils.hexZeroPad(ethers.utils.hexlify(Math.floor(Math.random() * 1000000)), 32);
+      const tokenId = Math.floor(Math.random() * 1000000);
       tx = await nftContract.mint(tokenId, { value: totalPrice, gasLimit: 300000 });
     } else {
       tx = await nftContract.batchMint(mintQuantity, { value: totalPrice, gasLimit: 500000 });
