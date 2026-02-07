@@ -212,13 +212,9 @@ async function mintNFT() {
     showMessage('Please confirm the transaction...', 'info');
     
     let tx;
-    if (mintQuantity === 1) {
-      // Generate random tokenId between 0-499 (valid range)
-      const tokenId = Math.floor(Math.random() * 500);
-      tx = await nftContract.mint(tokenId, { value: totalPrice, gasLimit: 300000 });
-    } else {
-      tx = await nftContract.batchMint(mintQuantity, { value: totalPrice, gasLimit: 500000 });
-    }
+    // Always use batchMint - it automatically uses the next available tokenId
+    // This avoids "token already minted" errors
+    tx = await nftContract.batchMint(mintQuantity, { value: totalPrice, gasLimit: 500000 });
     
     console.log('Transaction sent:', tx.hash);
     showMessage('Transaction sent! Waiting...', 'info');
