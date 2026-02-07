@@ -213,7 +213,8 @@ async function mintNFT() {
     
     let tx;
     if (mintQuantity === 1) {
-      const tokenId = Math.floor(Math.random() * 1000000);
+      // Generate random tokenId between 0-499 (valid range)
+      const tokenId = Math.floor(Math.random() * 500);
       tx = await nftContract.mint(tokenId, { value: totalPrice, gasLimit: 300000 });
     } else {
       tx = await nftContract.batchMint(mintQuantity, { value: totalPrice, gasLimit: 500000 });
