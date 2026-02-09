@@ -1,0 +1,58 @@
+{
+  "LSP4Metadata": {
+    "name": "POKSO Cyberpunk OFFICIAL",
+    "description": "The official POKSO Cyberpunk NFT collection on LUKSO. 500 unique digital identities.",
+    "links": [
+      {
+        "title": "Website",
+        "url": "https://pokso-ux.github.io/pokso-cyberpunk/"
+      },
+      {
+        "title": "GitHub",
+        "url": "https://github.com/pokso-ux/pokso-cyberpunk"
+      }
+    ],
+    "icon": [
+      {
+        "width": 256,
+        "height": 256,
+        "url": "https://pokso-ux.github.io/pokso-cyberpunk/official/icon.png",
+        "verification": {
+          "method": "keccak256(bytes)",
+          "data": "0x"
+        }
+      }
+    ],
+    "images": [
+      [
+        {
+          "width": 1024,
+          "height": 1024,
+          "url": "https://pokso-ux.github.io/pokso-cyberpunk/official/banner.png",
+          "verification": {
+            "method": "keccak256(bytes)",
+            "data": "0x"
+          }
+        }
+      ]
+    ],
+    "assets": [],
+    "attributes": [
+      {
+        "key": "Collection Size",
+        "value": "500",
+        "type": "number"
+      },
+      {
+        "key": "Mint Price",
+        "value": "0 LYX",
+        "type": "string"
+      },
+      {
+        "key": "Max Per Wallet",
+        "value": "10",
+        "type": "number"
+      }
+    ]
+  }
+}
