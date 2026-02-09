@@ -1,0 +1,19 @@
+{
+  "name": "POKSO Cyberpunk OFFICIAL",
+  "network": "lukso-mainnet",
+  "chainId": 42,
+  "deployer": "0xb3583A1c41ba77BD5960256aa36fc7DB5669312A",
+  "timestamp": "2026-02-09T15:43:04.459Z",
+  "version": "V7-OFFICIAL",
+  "baseURI": "https://pokso-ux.github.io/pokso-cyberpunk/official/metadata/",
+  "mintPrice": "0 LYX (FREE)",
+  "contracts": {
+    "LSP8": {
+      "address": "0x1086E92E79A7025a625873b2be3e81b41B96e56D",
+      "name": "POKSO Cyberpunk OFFICIAL"
+    },
+    "Minter": {
+      "address": "0x70d790807D886AB2b769a46A97b90a8f8FF5f30B"
+    }
+  }
+}
