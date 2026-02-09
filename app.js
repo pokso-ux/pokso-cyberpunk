@@ -2,13 +2,13 @@
 // Universal Profile connection and batch minting functionality
 
 const LUKSO_MAINNET = 'https://42.rpc.thirdweb.com';
-const MINT_PRICE = '5'; // LYX
+const MINT_PRICE = '0'; // LYX - FREE MINT
 const MAX_PER_WALLET = 10;
 const COLLECTION_SIZE = 500;
 
-// CLEAN ARCHITECTURE: Minter Contract V5 (auto-sets per-token LSP4 metadata at mint)
-const NFT_CONTRACT_ADDRESS = '0xd776FC4Db5eE0684409229a811246aD6F8146548';
-const LSP8_CONTRACT_ADDRESS = '0xF546D0D27148D6c6584211fF55ff10cF631adB1F'; // Pure LSP8 (for reference)
+// POKSOMinterV6 - Free Mint with proper metadata
+const NFT_CONTRACT_ADDRESS = '0xE566598AB8C00b3D24feD0E7c9C7Fc05901AE547';
+const LSP8_CONTRACT_ADDRESS = '0x11Eb80ef335F3E08eAA87c97947e23C0c621708D'; // Pure LSP8 V6
 
 // POKSOMinterV2 ABI V3 (Payment Handler + LSP4 Metadata)
 const NFT_ABI = [
