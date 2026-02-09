@@ -1,0 +1,47 @@
+{
+  "LSP4Metadata": {
+    "name": "POKSO Cyberpunk #271",
+    "description": "A unique cyberpunk digital identity. POKSO #271 of 500.",
+    "links": [
+      {
+        "title": "Collection",
+        "url": "https://pokso-ux.github.io/pokso-cyberpunk/"
+      }
+    ],
+    "icon": [
+      {
+        "width": 256,
+        "height": 256,
+        "url": "https://pokso-ux.github.io/pokso-cyberpunk/nfts/icon.png",
+        "verification": {
+          "method": "keccak256(bytes)",
+          "data": "0x"
+        }
+      }
+    ],
+    "images": [
+      {
+        "width": 512,
+        "height": 512,
+        "url": "https://pokso-ux.github.io/pokso-cyberpunk/271.png",
+        "verification": {
+          "method": "keccak256(bytes)",
+          "data": "0x"
+        }
+      }
+    ],
+    "assets": [],
+    "attributes": [
+      {
+        "key": "Token ID",
+        "value": "271",
+        "type": "string"
+      },
+      {
+        "key": "Collection Size",
+        "value": "500",
+        "type": "number"
+      }
+    ]
+  }
+}
